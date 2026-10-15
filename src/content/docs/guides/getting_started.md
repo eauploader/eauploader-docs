@@ -5,7 +5,7 @@ description: このガイドはアバター販売ショップが制作したも�
 ## 注意事項・免責事項
 * * *
 EAUploader は OSS(オープンソースソフトウェア)として開発、提供しているツールです。これは製品ではありません。
-EAUploader を使用して発生したあらゆる損害について、Project EAUplaoder(uslog.tech)はいかなる責任も負いません。
+EAUploader を使用して発生したあらゆる損害について、Project EAUploader(uslog.tech)はいかなる責任も負いません。
 
 Unity は様々なバグを抱えています。希に、予測されていない、解決できないバグやクラッシュが発生することがあります。最悪、プロジェクトが起動できなくなります(プロジェクトが壊れる)。
 プロジェクトはバックアップをとるようにしてください。
@@ -26,6 +26,7 @@ Unity は様々なバグを抱えています。希に、予測されていな�
 **・Creator Companion**
 ― VRChat が配布している Unity プロジェクト管理ソフトです。
 　 一般に、VCC と呼ばれています。
+　 VCC の代わりに、互換ソフトの ALCOM を使用することもできます。
 
 **導入するパッケージ（Unity に導入する追加の機能・ツール）**
 
@@ -73,7 +74,7 @@ EAUploader での操作は Unity に変更を行うものです。Unity は通�
 
 ![Untitled](getting_started/2.png)
 
-初めての方は、アカウントを作成するために Sigh In ボタンの下にある<span style="color: #00B0F0">Create account</span>をクリックしてください。
+初めての方は、アカウントを作成するために Sign In ボタンの下にある<span style="color: #00B0F0">Create account</span>をクリックしてください。
 
 ### サインインの完了
 
@@ -92,7 +93,7 @@ Unity Editor のインストール画面に遷移します。
 ![Untitled](getting_started/4.png)
 
 ここでは<span style="color: #00b0f0">Skip installation</span>をクリックしてスキップしてください。
-後のスキップにて、VCC からインストールを行います。
+後のステップにて、VCC からインストールを行います。
 
 ### ライセンスの認証
 
@@ -114,7 +115,7 @@ Unity Hub の通常の画面に遷移します。上部にライセンスの認�
 
 ![Untitled](getting_started/7.png)
 
-<span style="color: #00b0f0"></span><span style="color: #00b0f0">Get a free personal license</span>ボタンをクリックしてください。このライセンスでも Unity の通常のすべての機能を使用できます。
+<span style="color: #00b0f0">Get a free personal license</span>ボタンをクリックしてください。このライセンスでも Unity の通常のすべての機能を使用できます。
 ライセンスは Unity アカウントに対して有効になります。
 
 ※ここではライセンス認証が行えれば問題ないため、他の認証方法で認証しても大丈夫です。
@@ -197,6 +198,8 @@ Unity と VCC のセットアップが完了しました。
 プロジェクトは大きく４種類に分かれます。
 アバターとワールド用のプロジェクトが Unity2019 と 2022 用でそれぞれ２種ずつ４種類あります。
 
+※VCC のバージョンによって表示が異なる可能性があります。EAUploader は Unity 2022 にのみ対応しています。必ず Unity 2022 のアバター用プロジェクトを選択してください。
+
 ![Untitled](getting_started/18.png)
 
 <span style="color: #00b0f0">Unity 2022 Avatar Project</span>を選択してください。Project Name には適当な名前をつけてください。
@@ -208,14 +211,14 @@ Unity と VCC のセットアップが完了しました。
 
 プロジェクトの管理画面に遷移します。VCC パッケージはここから追加、更新、削除することができます。
 
-VCC に EAUploader を追加するため、[ここ](https://eauploader.uslog.tech/)をクリックしてください。
+VCC に EAUploader を追加するため、[ここ](https://eauploader.uslog.tech/install)をクリックしてください。
 
 ![Untitled](getting_started/19.png)
 
 自動で VCC にポップアップが表示されます。
 <span style="color: #00b0f0">I Understand, Add Repository</span>をクリックして VCC に EAUploader を追加します。
 
-Manage Packages の中から Easy Avatar Uploader for EAUploader を探して、⊕ ボタンをクリックして追加します。
+Manage Packages の中から Easy Avatar Uploader for VRChat を探して、⊕ ボタンをクリックして追加します。
 
 ![Untitled](getting_started/20.png)
 
@@ -231,11 +234,12 @@ Manage Packages の中から Easy Avatar Uploader for EAUploader を探して、
 
 ![Untitled](getting_started/22.png)
 
-VRM アバターを使用したい場合は別ガイド「VRM を使用する」を参照してください。
+VRM アバターを使用したい場合は別ガイド「[VRMアバターを使う](/guides/vrm/)」を参照してください。
 
 プロジェクトでは EAUploader を閉じて、通常の Unity エディタとしてアバターの改変を行うことも可能です。
 
-左下は終了ボタンです。EAUplaoder を閉じる場合は右上の ✕ から閉じてください。
+左下は終了ボタンです。EAUploader を閉じる場合は右上の ✕ から閉じてください。
+閉じた EAUploader は、Unity 上部のメニュー「EAUploader」→「Open EAUploader」から再び開くことができます。
 
 ## ツールの使い方
 * * *
@@ -246,6 +250,15 @@ EAUploader はツール内にガイドがあります。
 ![Untitled](getting_started/23.png)
 
 ツールの使い方やシェーダー、プラグイン、アップロードの説明など、ツールやアバター、作業に関する説明はツール内のガイドをお読みください。
+
+また、このドキュメントでも各画面の使い方を説明しています。
+
+- [画面の構成](/guides/overview/)
+- [アバターのインポートと管理](/guides/import/)
+- [セットアップ（アバターの調整）](/guides/setup/)
+- [アバターのアップロード](/guides/upload/)
+- [VRMアバターを使う](/guides/vrm/)
+- [EAUploaderの更新と削除](/guides/update/)
 
 ### バックアップの取り方
 
@@ -306,9 +319,9 @@ https://vrc.group/EAUP.0512
 
 [https://uslog.tech/contact](https://uslog.tech/contact)
 
-初めての方向けガイド v1.1
+初めての方向けガイド v1.2
 
-2024 年 7 月 25 日
+2026 年 10 月 15 日
 
 USLOG (uslog.tech)
 

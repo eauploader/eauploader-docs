@@ -1,8 +1,16 @@
 ---
 title: 'EAUploader.Editor.API'
 description: 'EAUploader.Editor.API namespace'
+sidebar:
+  order: 1
 ---
 
+EAUploaderの全体、言語、アップロードに関わる公開APIです。
+`Editor/Public EAUploader API/EAUploader.Editor.API.cs`で定義されています。
+
+```csharp
+using EAUploader.Editor.API;
+```
 
 | Class           | Description |
 | --------------- | ----------- |
@@ -19,7 +27,20 @@ description: 'EAUploader.Editor.API namespace'
 | HasVRM | Bool | EAUploaderでVRMが利用可能か示す値を取得 |
 | HasAvatarOptimizer | Bool | Avatar Optimizer パッケージが利用可能か示す値を取得 |
 | GetVersion | String | EAUploaderの現在のバージョンを取得します |
-| Reload | Void | EAUploaderを再読み込み（Initizalize）します |
+| Reload | Void | EAUploaderを再読み込み（Initialize）します |
+
+```csharp
+public static string SelectedPrefabPath { get; set; }
+public static event Action<string> SelectedPrefabPathChanged;
+public static bool HasVRM { get; }
+public static bool HasAvatarOptimizer { get; }
+public static string GetVersion(bool noText = false);
+public static void Reload();
+```
+
+* `SelectedPrefabPath`は、アバターが選択されていない場合`null`です。値を設定すると、`SelectedPrefabPathChanged`が発生します。
+* `GetVersion`は、`noText`が`true`の場合はバージョン番号のみ（例：`1.4.6`）、`false`の場合は「バージョン: 1.4.6」のように説明テキストを含めた文字列を返します。
+* `Reload`は、メニューの「EAUploader」→「Reload」と同じ処理を行います。選択中のプレハブは解除されます。
 
 # LanguageAPI
 * * *
@@ -32,6 +53,22 @@ description: 'EAUploader.Editor.API namespace'
 | ChangeLanguage | Void | アプリケーションの言語を変更 |
 | GetAvailableLanguages | List | 利用可能な言語のリストを取得 |
 
+```csharp
+public static string GetCurrentLanguage();
+public static void Localize(VisualElement root);
+public static void LocalizeFromJsonFile(VisualElement root, string localizationFolderPath);
+public static string GetLocalizedTextFromJsonFile(string key, string localizationFolderPath);
+public static void ChangeLanguage(string language);
+public static List<LanguageInfo> GetAvailableLanguages();
+```
+
+* 言語コードは`en`、`ja`、`ko`です。
+* `Localize`は、EAUploader本体の翻訳ファイルを使用してローカライズします。拡張機能独自の文字列をローカライズする場合は`LocalizeFromJsonFile`を使用してください。
+* `LocalizeFromJsonFile`、`GetLocalizedTextFromJsonFile`で使用するJSONファイルの形式は「[クイックスタートガイダンス](/for_tooldev/extension/#作成するjsonファイルの形式)」をご覧ください。
+* `GetLocalizedTextFromJsonFile`は、対応するテキストが見つからない場合はキーをそのまま返します。
+* `ChangeLanguage`は設定ファイルの言語を変更します。表示を切り替えるには、EAUploaderの再起動が必要です。
+* `LanguageInfo`は`name`（言語コード）と`display`（表示名）を持ちます。
+
 # UploadAPI
 * * *
 | Method | Type | Description |
@@ -43,3 +80,30 @@ description: 'EAUploader.Editor.API namespace'
 | UploadAvatarAsync | Task | 指定したプレハブをアバターとしてアップロードする非同期タスクを実行 |
 | UpdateVRCAvatar | Task | 指定したプレハブのVRCAvatar情報を更新する非同期タスクを実行 |
 
+```csharp
+public static event EventHandler OnUploadComplete;
+public static event EventHandler<AvatarUploader.ProgressEventArgs> UploadProgressChanged;
+public static Task BuildAndTestAsync(string prefabPath);
+public static Task<VRCAvatar?> GetVRCAvatar(string prefabPath);
+public static Task UploadAvatarAsync(string prefabPath, string contentName, string contentDescription, string releaseStatus, List<string> tags, string thumbnailPath);
+public static Task UpdateVRCAvatar(string prefabPath, string contentName, string contentDescription, string releaseStatus, List<string> tags, string thumbnailPath);
+```
+
+| 引数 | 内容 |
+| ---- | ---- |
+| `prefabPath` | プレハブのパス |
+| `contentName` | アバター名 |
+| `contentDescription` | アバターの説明 |
+| `releaseStatus` | 公開ステータス（`private` / `public`） |
+| `tags` | タグ（`content_sex`、`content_adult`、`content_violence`、`content_gore`、`content_horror`など） |
+| `thumbnailPath` | サムネイル画像のパス |
+
+* `UploadProgressChanged`の`ProgressEventArgs`は、`Status`（進行状況の説明）と`Percentage`（0～1の進捗）を持ちます。
+* `GetVRCAvatar`は、VRChatにログインしていない場合、プレハブに`PipelineManager`又はBlueprint IDが無い場合、VRChat上にアバターが見つからない場合は`null`を返します。
+* `UploadAvatarAsync`は、VRChat上にアバターが無い場合は新規にアップロードし、ある場合はアバターを更新します。
+* `UpdateVRCAvatar`は、アバターを再ビルドせずに、名前や説明などの情報とサムネイルを更新します。
+* これらのメソッドを使用するには、VRChat SDKにログインしている必要があります。
+
+:::caution
+`BuildAndTestAsync`、`UploadAvatarAsync`は、ビルドの前にVRChatで使用できないコンポーネントをプレハブから削除します。
+:::

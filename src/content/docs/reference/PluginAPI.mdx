@@ -1,0 +1,83 @@
+---
+title: 'EAUploader.Editor.Plugin.API'
+description: 'EAUploader.Editor.Plugin.API namespace'
+sidebar:
+  order: 2
+---
+
+拡張機能（プラグイン）の登録に関わる公開APIです。
+`Editor/Public EAUploader API/EAUploader.Editor.Plugin.API.cs`で定義されています。
+
+```csharp
+using EAUploader.Editor.Plugin.API;
+```
+
+| Class           | Description |
+| --------------- | ----------- |
+| PluginAPI | プラグイン関連の公開APIを提供するクラス |
+| PluginAPI.EditorRegistration | エディタの登録情報を表すクラス |
+| PluginAPI.EAUPluginAttribute | プラグインの初期化メソッドを指定するための属性 |
+
+# PluginAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| OnEditorRegistered | Event | 新しいエディタが登録されたときに発生するイベント |
+| OnEditorManagerLoad | Void | エディタマネージャーを読み込み（初期化）します |
+| RegisterEditor | Void | 新しいエディタを登録します |
+| GetRegisteredEditors | IEnumerable | 登録されているエディタのリストを取得します |
+
+```csharp
+public static event EAUploaderEditorManager.EditorRegisteredHandler OnEditorRegistered;
+public static void OnEditorManagerLoad();
+public static void RegisterEditor(PluginAPI.EditorRegistration editorRegistration);
+public static IEnumerable<PluginAPI.EditorRegistration> GetRegisteredEditors();
+```
+
+* `RegisterEditor`は、`EAUploaderEditorManager.RegisterEditor`と同じ働きをします。登録したエディタは、セットアップタブの「編集ツール」に表示されます。
+* `OnEditorManagerLoad`は、EAUploaderの起動時に呼び出される処理です。通常、拡張機能から呼び出す必要はありません。
+
+# PluginAPI.EditorRegistration
+* * *
+| Property | Type | Description |
+| ------ | ---- | ----------- |
+| MenuName | String | 起動ボタンを押したときに実行するメニューのパス |
+| EditorName | String | 編集ツールの一覧に表示する名前 |
+| Description | String | 説明 |
+| Version | String | バージョン |
+| Author | String | 作者 |
+| Url | String | サポートページ等のURL |
+| Requirement | Func&lt;string, bool&gt; | 使用可否を判定するメソッド。引数には選択中のプレハブのパスが渡される |
+| RequirementDescription | String | 使用できない場合に表示するメッセージ |
+
+各プロパティの詳細は「[クイックスタートガイダンス](/for_tooldev/extension/)」をご覧ください。
+
+# PluginAPI.EAUPluginAttribute
+* * *
+プラグインの初期化メソッドを指定するための属性です。
+
+:::caution
+v1.4.6時点では、この属性を付与したメソッドはEAUploaderの起動時に呼び出されません。
+初期化メソッドには、`EAUploader`名前空間の`EAUPlugin`属性（`EAUploader.EAUPluginAttribute`）を使用してください。
+:::
+
+```csharp
+using EAUploader;
+using EAUploader.Editor.Plugin.API;
+
+public static class MyPlugin
+{
+    [EAUPlugin] // EAUploader.EAUPluginAttribute
+    private static void Initialize()
+    {
+        PluginAPI.RegisterEditor(new PluginAPI.EditorRegistration
+        {
+            MenuName = "Tools/My Avatar Tool",
+            EditorName = "My Avatar Tool",
+            Description = "Description of my tool",
+            Version = "0.1.0",
+            Author = "Your Name",
+        });
+    }
+}
+```

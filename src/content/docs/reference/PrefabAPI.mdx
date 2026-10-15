@@ -1,0 +1,143 @@
+---
+title: 'EAUploader.Editor.Prefab.API'
+description: 'EAUploader.Editor.Prefab.API namespace'
+sidebar:
+  order: 3
+---
+
+プレハブの操作、情報の取得に関わる公開APIです。
+`Editor/Public EAUploader API/EAUploader.Editor.Prefab.API.cs`で定義されています。
+
+```csharp
+using EAUploader.Editor.Prefab.API;
+```
+
+| Class           | Description |
+| --------------- | ----------- |
+| PrefabAPI | プレハブの操作、情報の取得を提供するクラス |
+| PrefabPreviewAPI | プレハブのプレビュー画像を提供するクラス |
+| ShaderAPI | シェーダーの確認を提供するクラス |
+| PrefabUtilityAPI | アバターの情報の取得を提供するクラス |
+| VRMAPI | VRMのインポートを提供するクラス（VRM Converter for VRChat導入時のみ） |
+
+:::note
+`VRCAvatarDescriptor`や`PipelineManager`を返すメソッドを使用する場合は、拡張機能のアセンブリにVRChat SDKのアセンブリへの参照を追加してください。
+:::
+
+# PrefabAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| UpdatePrefabInfo | Void | プレハブ情報（PrefabManager.json）を更新します |
+| ImportPrefab | Void | 指定したパスのプレハブをEAUploaderに取り込みます |
+| GetPrefab | GameObject | 指定したパスのプレハブを取得します |
+| ShowDeletePrefabDialog | Bool | プレハブの削除ダイアログを表示します |
+| DeletePrefabPreview | Void | 指定したパスのプレハブのプレビュー画像を削除します |
+| PinPrefab | Void | 指定したパスのプレハブのピン留めを切り替えます |
+| GetAvatarDescriptor | VRCAvatarDescriptor | 指定したパスのプレハブのVRCAvatarDescriptorを取得します |
+| IsPinned | Bool | 指定したパスのプレハブがピン留めされているか確認します |
+| SavePrefab | Void | プレハブを保存します |
+
+```csharp
+public static void UpdatePrefabInfo();
+public static void ImportPrefab(string prefabPath);
+public static GameObject GetPrefab(string prefabPath);
+public static bool ShowDeletePrefabDialog(string prefabPath);
+public static void DeletePrefabPreview(string prefabPath);
+public static void PinPrefab(string prefabPath);
+public static VRCAvatarDescriptor GetAvatarDescriptor(string prefabPath);
+public static bool IsPinned(string prefabPath);
+public static void SavePrefab(GameObject prefab, string path);
+```
+
+* `GetPrefab`、`GetAvatarDescriptor`は、プレハブが見つからない場合`null`を返します。
+* `ImportPrefab`は、プレハブに`EAUploaderMeta`コンポーネントを追加し、プレビュー画像を生成して、モデルの管理の一覧を更新します。
+* `ShowDeletePrefabDialog`は、ユーザーが削除を選択した場合にプレハブとプレビュー画像を削除し、`true`を返します。
+* `PinPrefab`は、ピン留めされていない場合はピン留めし、ピン留めされている場合は解除します。
+* `SavePrefab`は、`GameObject`を指定したパスにプレハブとして保存し、`ImportPrefab`を実行します。
+
+# PrefabPreviewAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| GeneratePreview | Texture2D | プレハブのプレビュー画像を生成します |
+| GenerateAndSaveAllPrefabPreviews | Void | プレビュー画像が無いすべてのプレハブのプレビュー画像を生成して保存します |
+| SavePrefabPreview | Void | プレハブのプレビュー画像を保存します |
+| LoadTextureFromFile | Texture2D | ファイルからテクスチャを読み込みます |
+| SaveTextureToFile | Void | テクスチャをPNGファイルに保存します |
+| GetPreviewImagePath | String | プレハブのプレビュー画像のパスを取得します |
+| GetPrefabPreview | Texture2D | プレハブのプレビュー画像を取得します |
+
+```csharp
+public static Texture2D GeneratePreview(GameObject prefab);
+public static void GenerateAndSaveAllPrefabPreviews();
+public static void SavePrefabPreview(string prefabPath, Texture2D preview);
+public static Texture2D LoadTextureFromFile(string filePath);
+public static void SaveTextureToFile(Texture2D texture, string filePath);
+public static string GetPreviewImagePath(string prefabPath);
+public static Texture2D GetPrefabPreview(string prefabPath);
+```
+
+* プレビュー画像は`Assets/EAUploader/PrefabPreviews/{プレハブ名}.png`に保存されます。
+* `GeneratePreview`は、1080×1080の画像を生成します。
+* `GetPrefabPreview`は、プレビュー画像が存在しない場合`null`を返します。
+
+# ShaderAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CheckShaders | Void | Assets内のすべてのプレハブのシェーダーを確認します |
+| GetExistingShaders | List | プロジェクトに導入されているシェーダーのグループ名の一覧を取得します |
+| CheckShadersInPrefabs | Void | 指定したプレハブのシェーダーを確認します |
+| CheckAvatarHasShader | Bool | アバターに必要なシェーダーがすべて存在するか確認します |
+
+```csharp
+public static void CheckShaders();
+public static List<string> GetExistingShaders();
+public static void CheckShadersInPrefabs(string prefabPath);
+public static bool CheckAvatarHasShader(GameObject avatar);
+```
+
+* `CheckShaders`、`CheckShadersInPrefabs`は、シェーダーが不足しているプレハブがある場合にダイアログを表示します。
+* `CheckAvatarHasShader`は、シェーダーが不足していない場合に`true`を返します。ダイアログは表示しません。
+
+# PrefabUtilityAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| GetAvatarHeight | Float | アバターの高さ（視点の高さ）を取得します |
+| CheckAvatarHasVRCAvatarDescriptor | Bool | アバターがVRCAvatarDescriptorを持っているか確認します |
+| CheckAvatarIsVRM | Bool | アバターがVRMか確認します |
+| CheckAvatarHasTandO | Bool | アバターがAvatarOptimizerのTraceAndOptimizeを持っているか確認します |
+| GetAvatarDescriptor | VRCAvatarDescriptor | アバターのVRCAvatarDescriptorを取得します |
+| GetPipelineManager | PipelineManager | アバターのPipelineManagerを取得します |
+
+```csharp
+public static float GetAvatarHeight(GameObject avatar);
+public static bool CheckAvatarHasVRCAvatarDescriptor(GameObject avatar);
+public static bool CheckAvatarIsVRM(GameObject avatar);
+public static bool CheckAvatarHasTandO(GameObject avatar);
+public static VRCAvatarDescriptor GetAvatarDescriptor(GameObject avatar);
+public static VRC.Core.PipelineManager GetPipelineManager(GameObject avatar);
+```
+
+* `GetAvatarHeight`は、VRCAvatarDescriptorの`ViewPosition`のY座標を返します。VRCAvatarDescriptorが無い場合は`0`を返します。
+* `CheckAvatarHasVRCAvatarDescriptor`は、`avatar`が`null`の場合`false`を返します。
+* `CheckAvatarIsVRM`は、VRM Converter for VRChatが導入されていない場合は常に`false`を返します。
+* `CheckAvatarHasTandO`は、AvatarOptimizerが導入されていない場合は常に`false`を返します。
+
+# VRMAPI
+* * *
+VRM Converter for VRChatが導入されている場合（`HAS_VRM`が定義されている場合）のみ使用できます。
+
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| ImportVRM | Void | VRMファイルをインポートし、変換ウィンドウを表示します |
+
+```csharp
+public static void ImportVRM(string path = null);
+```
+
+* `path`を省略した場合は、ファイル選択ダイアログを表示します。
+* プロジェクトの`Assets`内にあるファイルは指定できません。
+* インポートしたVRMは`Assets/VRM/{ファイル名}.prefab`に保存されます。
