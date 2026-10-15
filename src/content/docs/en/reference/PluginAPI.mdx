@@ -1,0 +1,83 @@
+---
+title: 'EAUploader.Editor.Plugin.API'
+description: 'EAUploader.Editor.Plugin.API namespace'
+sidebar:
+  order: 2
+---
+
+Public API related to registering extensions (plugins).
+Defined in `Editor/Public EAUploader API/EAUploader.Editor.Plugin.API.cs`.
+
+```csharp
+using EAUploader.Editor.Plugin.API;
+```
+
+| Class           | Description |
+| --------------- | ----------- |
+| PluginAPI | Provides public APIs related to plugins |
+| PluginAPI.EditorRegistration | Represents editor registration information |
+| PluginAPI.EAUPluginAttribute | Attribute for specifying a plugin's initialization method |
+
+# PluginAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| OnEditorRegistered | Event | Raised when a new editor is registered |
+| OnEditorManagerLoad | Void | Loads (initializes) the editor manager |
+| RegisterEditor | Void | Registers a new editor |
+| GetRegisteredEditors | IEnumerable | Gets the list of registered editors |
+
+```csharp
+public static event EAUploaderEditorManager.EditorRegisteredHandler OnEditorRegistered;
+public static void OnEditorManagerLoad();
+public static void RegisterEditor(PluginAPI.EditorRegistration editorRegistration);
+public static IEnumerable<PluginAPI.EditorRegistration> GetRegisteredEditors();
+```
+
+* `RegisterEditor` works the same as `EAUploaderEditorManager.RegisterEditor`. Registered editors are shown in "Edit tool" in the Setup tab.
+* `OnEditorManagerLoad` is the process called when EAUploader starts. Extensions normally do not need to call it.
+
+# PluginAPI.EditorRegistration
+* * *
+| Property | Type | Description |
+| ------ | ---- | ----------- |
+| MenuName | String | Path of the menu executed when the button is pressed |
+| EditorName | String | Name shown in the edit tool list |
+| Description | String | Description |
+| Version | String | Version |
+| Author | String | Author |
+| Url | String | URL of a support page, etc. |
+| Requirement | Func&lt;string, bool&gt; | Method that decides whether the editor can be used. The path of the selected prefab is passed as the argument |
+| RequirementDescription | String | Message shown when the editor cannot be used |
+
+For details on each property, see "[Quick Start Guidance](/en/for_tooldev/extension/)".
+
+# PluginAPI.EAUPluginAttribute
+* * *
+Attribute for specifying a plugin's initialization method.
+
+:::caution
+As of v1.4.6, methods with this attribute are not called when EAUploader starts.
+For initialization methods, use the `EAUPlugin` attribute in the `EAUploader` namespace (`EAUploader.EAUPluginAttribute`).
+:::
+
+```csharp
+using EAUploader;
+using EAUploader.Editor.Plugin.API;
+
+public static class MyPlugin
+{
+    [EAUPlugin] // EAUploader.EAUPluginAttribute
+    private static void Initialize()
+    {
+        PluginAPI.RegisterEditor(new PluginAPI.EditorRegistration
+        {
+            MenuName = "Tools/My Avatar Tool",
+            EditorName = "My Avatar Tool",
+            Description = "Description of my tool",
+            Version = "0.1.0",
+            Author = "Your Name",
+        });
+    }
+}
+```

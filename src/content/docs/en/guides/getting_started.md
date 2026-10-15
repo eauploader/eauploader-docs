@@ -25,6 +25,7 @@ Also, please save important data such as avatar data outside of the project.
 **・Creator Companion**
 - A Unity project management software distributed by VRChat.
   Commonly known as VCC.
+  You can also use ALCOM, a compatible alternative, instead of VCC.
 
 **Packages to Install (Additional features and tools to install in Unity)**
 
@@ -34,7 +35,7 @@ Also, please save important data such as avatar data outside of the project.
 **・EAUploader**
 - The main body of EAUploader. It operates within Unity.
 
-Operations in EAUploader make changes in Unity. Unity does not save changes automatically to maintain the usual work state.
+Operations in EAUploader make changes in Unity. Unity normally keeps its working state, so you do not need to save when you finish.
   Uploading avatars through EAUploader uses the features of VRCSDK and is the same as uploading using VRCSDK.
 
 ### If You Have Problems
@@ -193,6 +194,8 @@ Next, create a new project by selecting <span style="color: #00b0f0">Create New 
 Projects are broadly divided into four types.
 There are two types of projects for avatars and worlds each for Unity 2019 and 2022.
 
+*Note: The display may vary depending on the version of VCC. EAUploader only supports Unity 2022. Be sure to select an avatar project for Unity 2022.*
+
 ![Untitled](getting_started/18.png)
 
 Please select <span style="color: #00b0f0">Unity 2022 Avatar Project</span>. Give the project a suitable name.
@@ -204,14 +207,14 @@ After entering, select <span style="color: #00b0f0">Create Project</span> to pro
 
 You will move to the project management screen. VCC packages can be added, updated, or deleted from here.
 
-To add EAUploader to VCC, click [here](https://eauploader.uslog.tech/).
+To add EAUploader to VCC, click [here](https://eauploader.uslog.tech/install).
 
 ![Untitled](getting_started/19.png)
 
 A popup will automatically appear in VCC.
 Click <span style="color: #00b0f0">I Understand, Add Repository</span> to add EAUploader to VCC.
 
-Find Easy Avatar Uploader for EAUploader in Manage Packages and click the ⊕ button to add it.
+Find Easy Avatar Uploader for VRChat in Manage Packages and click the ⊕ button to add it.
 
 ![Untitled](getting_started/20.png)
 
@@ -227,11 +230,12 @@ You are now ready to upload avatars.
 
 ![Untitled](getting_started/22.png)
 
-If you want to use VRM avatars, please refer to the separate guide "Using VRM".
+If you want to use VRM avatars, please refer to the separate guide "[Using VRM Avatars](/en/guides/vrm/)".
 
 In the project, you can close EAUploader and modify the avatar as a regular Unity editor.
 
 The button in the lower left is the exit button. To close EAUploader, click ✕ in the upper right corner.
+You can reopen a closed EAUploader from the Unity menu "EAUploader" → "Open EAUploader".
 
 ## How to Use the Tool
 * * *
@@ -242,6 +246,15 @@ EAUploader has a guide within the tool.
 ![Untitled](getting_started/23.png)
 
 Please read the in-tool guide for explanations on tools, shaders, plugins, uploads, and related work.
+
+This documentation also explains how to use each screen.
+
+- [Screen Layout](/en/guides/overview/)
+- [Importing and Managing Avatars](/en/guides/import/)
+- [Setup (Adjusting Avatars)](/en/guides/setup/)
+- [Uploading Avatars](/en/guides/upload/)
+- [Using VRM Avatars](/en/guides/vrm/)
+- [Updating and Removing EAUploader](/en/guides/update/)
 
 ### How to Back Up
 
@@ -302,9 +315,9 @@ For inquiries from both individuals and corporations to Project EAUploader or th
 
 [https://uslog.tech/contact](https://uslog.tech/contact)
 
-Guide for New Users v1.1
+Guide for New Users v1.2
 
-July 25, 2024
+October 15, 2026
 
 USLOG (uslog.tech)
 

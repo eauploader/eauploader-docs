@@ -1,0 +1,115 @@
+---
+title: 'EAUploader.Editor.Resource.API'
+description: 'EAUploader.Editor.Resource.API namespace'
+sidebar:
+  order: 4
+---
+
+Public API that provides EAUploader's styles and custom UI component features.
+Defined in `Editor/Public EAUploader API/EAUploader.Editor.Resource.API.cs`.
+
+```csharp
+using EAUploader.Editor.Resource.API;
+```
+
+For details on each component, see "[UI Components](/en/for_tooldev/ui_components/)".
+
+| Class           | Description |
+| --------------- | ----------- |
+| EAUResourceAPI | Provides EAUploader's stylesheets |
+| HelpButtonAPI | Shows help messages |
+| LinkAPI | Creates links |
+| MaterialIconAPI | Creates material icons |
+| PrefabItemButtonAPI | Creates prefab item buttons |
+| ShadowButtonAPI | Creates shadow buttons |
+| PreviewAPI | Provides interactive avatar previews |
+
+# EAUResourceAPI
+* * *
+| Property | Type | Description |
+| ------ | ---- | ----------- |
+| EAUStyles | StyleSheet | EAUploader's stylesheet |
+| EAUTailwind | StyleSheet | Tailwind stylesheet |
+
+```csharp
+public static StyleSheet EAUStyles { get; }
+public static StyleSheet EAUTailwind { get; }
+```
+
+* These are loaded when EAUploader's main window is shown. They are `null` if the main window has never been shown. To get them reliably, use `Resources.Load<StyleSheet>("UI/styles")` and `Resources.Load<StyleSheet>("UI/tailwind")`.
+
+# HelpButtonAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| ShowMessage | Void | Shows a window with the message of the specified message number |
+
+```csharp
+public static void ShowMessage(int msgNum);
+```
+
+* Messages are loaded from `Editor/Resources/Message/{language code}/{message number}.txt` of EAUploader itself. For the message numbers in use, see "[Localization and Resources](/en/for_dev/localization/#message-numbers-in-use)".
+
+# LinkAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CreateLink | VisualElement | Creates a link with the specified text and URL |
+
+```csharp
+public static VisualElement CreateLink(string text, string url);
+```
+
+# MaterialIconAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CreateMaterialIcon | VisualElement | Creates a material icon with the specified icon name |
+
+```csharp
+public static VisualElement CreateMaterialIcon(string iconName);
+```
+
+* Specify an icon name from [Material Icons](https://fonts.google.com/icons?icon.set=Material+Icons).
+* To show icons, `EAUStyles` (`UI/styles`) must be applied.
+
+# PrefabItemButtonAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CreatePrefabItemButton | VisualElement | Creates a prefab item button with the specified prefab information and click action |
+
+```csharp
+public static VisualElement CreatePrefabItemButton(PrefabInfo prefab, Action clickAction, bool disabled = false);
+```
+
+* `PrefabInfo` is `EAUploader.CustomPrefabUtility.PrefabInfo`. A list with preview images can be obtained with `PrefabManager.GetAllPrefabsWithPreview()`.
+* When `disabled` is `true`, buttons for avatars that cannot be uploaded cannot be pressed.
+
+# ShadowButtonAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CreateShadowButton | VisualElement | Creates a shadow button with the specified text and click action |
+
+```csharp
+public static VisualElement CreateShadowButton(string text, Action clickAction);
+```
+
+# PreviewAPI
+* * *
+This preview is not a Texture2D preview but a rendered preview that can be operated with the mouse.
+
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CreatePreview | Preview | Creates a preview with the specified root element and prefab path |
+| ShowContent | Void | Shows the preview content |
+| UpdatePreview | Void | Updates the preview with the specified prefab path |
+| ResetPreview | Void | Resets the preview |
+
+```csharp
+public static Preview CreatePreview(VisualElement rootElement, string prefabPath);
+public static void ShowContent(Preview preview);
+public static void UpdatePreview(Preview preview, string prefabPath);
+public static void ResetPreview(Preview preview);
+```

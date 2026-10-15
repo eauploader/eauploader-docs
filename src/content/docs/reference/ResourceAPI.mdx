@@ -1,0 +1,115 @@
+---
+title: 'EAUploader.Editor.Resource.API'
+description: 'EAUploader.Editor.Resource.API namespace'
+sidebar:
+  order: 4
+---
+
+EAUploaderのスタイル、独自UIコンポーネントの機能を提供する公開APIです。
+`Editor/Public EAUploader API/EAUploader.Editor.Resource.API.cs`で定義されています。
+
+```csharp
+using EAUploader.Editor.Resource.API;
+```
+
+各コンポーネントの詳細は「[UIコンポーネント](/for_tooldev/ui_components/)」をご覧ください。
+
+| Class           | Description |
+| --------------- | ----------- |
+| EAUResourceAPI | EAUploaderのスタイルシートを提供するクラス |
+| HelpButtonAPI | ヘルプメッセージを表示するクラス |
+| LinkAPI | リンクを作成するクラス |
+| MaterialIconAPI | マテリアルアイコンを作成するクラス |
+| PrefabItemButtonAPI | プレハブアイテムボタンを作成するクラス |
+| ShadowButtonAPI | シャドウボタンを作成するクラス |
+| PreviewAPI | 操作可能なアバターのプレビューを提供するクラス |
+
+# EAUResourceAPI
+* * *
+| Property | Type | Description |
+| ------ | ---- | ----------- |
+| EAUStyles | StyleSheet | EAUploaderのスタイルシート |
+| EAUTailwind | StyleSheet | Tailwindのスタイルシート |
+
+```csharp
+public static StyleSheet EAUStyles { get; }
+public static StyleSheet EAUTailwind { get; }
+```
+
+* これらはEAUploaderのメインウィンドウが表示されたときに読み込まれます。メインウィンドウが一度も表示されていない場合は`null`になります。確実に取得する場合は`Resources.Load<StyleSheet>("UI/styles")`、`Resources.Load<StyleSheet>("UI/tailwind")`を使用してください。
+
+# HelpButtonAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| ShowMessage | Void | 指定したメッセージ番号のメッセージを表示するウィンドウを表示します |
+
+```csharp
+public static void ShowMessage(int msgNum);
+```
+
+* メッセージはEAUploader本体の`Editor/Resources/Message/{言語コード}/{メッセージ番号}.txt`から読み込まれます。使用されているメッセージ番号は「[多言語対応とリソース](/for_dev/localization/#使用されているメッセージ番号)」をご覧ください。
+
+# LinkAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CreateLink | VisualElement | 指定したテキストとURLを持つリンクを作成します |
+
+```csharp
+public static VisualElement CreateLink(string text, string url);
+```
+
+# MaterialIconAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CreateMaterialIcon | VisualElement | 指定したアイコン名を持つマテリアルアイコンを作成します |
+
+```csharp
+public static VisualElement CreateMaterialIcon(string iconName);
+```
+
+* アイコン名は[Material Icons](https://fonts.google.com/icons?icon.set=Material+Icons)の名前を指定します。
+* アイコンを表示するには、`EAUStyles`（`UI/styles`）を適用する必要があります。
+
+# PrefabItemButtonAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CreatePrefabItemButton | VisualElement | 指定したプレハブ情報とクリックアクションを持つプレハブアイテムボタンを作成します |
+
+```csharp
+public static VisualElement CreatePrefabItemButton(PrefabInfo prefab, Action clickAction, bool disabled = false);
+```
+
+* `PrefabInfo`は`EAUploader.CustomPrefabUtility.PrefabInfo`です。プレビュー画像付きの一覧は`PrefabManager.GetAllPrefabsWithPreview()`で取得できます。
+* `disabled`が`true`の場合、アップロードできないアバターのボタンを押せない状態にします。
+
+# ShadowButtonAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CreateShadowButton | VisualElement | 指定したテキストとクリックアクションを持つシャドウボタンを作成します |
+
+```csharp
+public static VisualElement CreateShadowButton(string text, Action clickAction);
+```
+
+# PreviewAPI
+* * *
+このプレビューはTexture2Dのプレビューではなく、マウスで操作可能な描画されるプレビューです。
+
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CreatePreview | Preview | 指定したルート要素とプレハブパスを持つプレビューを作成します |
+| ShowContent | Void | プレビューのコンテンツを表示します |
+| UpdatePreview | Void | 指定したプレハブパスでプレビューを更新します |
+| ResetPreview | Void | プレビューをリセットします |
+
+```csharp
+public static Preview CreatePreview(VisualElement rootElement, string prefabPath);
+public static void ShowContent(Preview preview);
+public static void UpdatePreview(Preview preview, string prefabPath);
+public static void ResetPreview(Preview preview);
+```
