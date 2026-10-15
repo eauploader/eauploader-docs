@@ -1,0 +1,143 @@
+---
+title: 'EAUploader.Editor.Prefab.API'
+description: 'EAUploader.Editor.Prefab.API namespace'
+sidebar:
+  order: 3
+---
+
+Public API related to operating on prefabs and getting their information.
+Defined in `Editor/Public EAUploader API/EAUploader.Editor.Prefab.API.cs`.
+
+```csharp
+using EAUploader.Editor.Prefab.API;
+```
+
+| Class           | Description |
+| --------------- | ----------- |
+| PrefabAPI | Provides prefab operations and information |
+| PrefabPreviewAPI | Provides prefab preview images |
+| ShaderAPI | Provides shader checks |
+| PrefabUtilityAPI | Provides avatar information |
+| VRMAPI | Provides VRM import (only when VRM Converter for VRChat is installed) |
+
+:::note
+When using methods that return `VRCAvatarDescriptor` or `PipelineManager`, add references to the VRChat SDK assemblies to your extension's assembly.
+:::
+
+# PrefabAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| UpdatePrefabInfo | Void | Updates the prefab information (PrefabManager.json) |
+| ImportPrefab | Void | Brings the prefab at the specified path into EAUploader |
+| GetPrefab | GameObject | Gets the prefab at the specified path |
+| ShowDeletePrefabDialog | Bool | Shows the prefab deletion dialog |
+| DeletePrefabPreview | Void | Deletes the preview image of the prefab at the specified path |
+| PinPrefab | Void | Toggles pinning of the prefab at the specified path |
+| GetAvatarDescriptor | VRCAvatarDescriptor | Gets the VRCAvatarDescriptor of the prefab at the specified path |
+| IsPinned | Bool | Checks whether the prefab at the specified path is pinned |
+| SavePrefab | Void | Saves a prefab |
+
+```csharp
+public static void UpdatePrefabInfo();
+public static void ImportPrefab(string prefabPath);
+public static GameObject GetPrefab(string prefabPath);
+public static bool ShowDeletePrefabDialog(string prefabPath);
+public static void DeletePrefabPreview(string prefabPath);
+public static void PinPrefab(string prefabPath);
+public static VRCAvatarDescriptor GetAvatarDescriptor(string prefabPath);
+public static bool IsPinned(string prefabPath);
+public static void SavePrefab(GameObject prefab, string path);
+```
+
+* `GetPrefab` and `GetAvatarDescriptor` return `null` if the prefab is not found.
+* `ImportPrefab` adds an `EAUploaderMeta` component to the prefab, generates a preview image, and updates the Manage Model list.
+* `ShowDeletePrefabDialog` deletes the prefab and its preview image and returns `true` if the user chooses to delete.
+* `PinPrefab` pins the prefab if it is not pinned, and unpins it if it is.
+* `SavePrefab` saves the `GameObject` as a prefab at the specified path and runs `ImportPrefab`.
+
+# PrefabPreviewAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| GeneratePreview | Texture2D | Generates a preview image of a prefab |
+| GenerateAndSaveAllPrefabPreviews | Void | Generates and saves preview images for all prefabs that do not have one |
+| SavePrefabPreview | Void | Saves a prefab's preview image |
+| LoadTextureFromFile | Texture2D | Loads a texture from a file |
+| SaveTextureToFile | Void | Saves a texture to a PNG file |
+| GetPreviewImagePath | String | Gets the path of a prefab's preview image |
+| GetPrefabPreview | Texture2D | Gets a prefab's preview image |
+
+```csharp
+public static Texture2D GeneratePreview(GameObject prefab);
+public static void GenerateAndSaveAllPrefabPreviews();
+public static void SavePrefabPreview(string prefabPath, Texture2D preview);
+public static Texture2D LoadTextureFromFile(string filePath);
+public static void SaveTextureToFile(Texture2D texture, string filePath);
+public static string GetPreviewImagePath(string prefabPath);
+public static Texture2D GetPrefabPreview(string prefabPath);
+```
+
+* Preview images are saved to `Assets/EAUploader/PrefabPreviews/{prefab name}.png`.
+* `GeneratePreview` generates a 1080×1080 image.
+* `GetPrefabPreview` returns `null` if no preview image exists.
+
+# ShaderAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CheckShaders | Void | Checks the shaders of all prefabs in Assets |
+| GetExistingShaders | List | Gets a list of the group names of shaders installed in the project |
+| CheckShadersInPrefabs | Void | Checks the shaders of the specified prefab |
+| CheckAvatarHasShader | Bool | Checks whether all shaders required by an avatar exist |
+
+```csharp
+public static void CheckShaders();
+public static List<string> GetExistingShaders();
+public static void CheckShadersInPrefabs(string prefabPath);
+public static bool CheckAvatarHasShader(GameObject avatar);
+```
+
+* `CheckShaders` and `CheckShadersInPrefabs` show a dialog if there are prefabs with missing shaders.
+* `CheckAvatarHasShader` returns `true` if no shaders are missing. It does not show a dialog.
+
+# PrefabUtilityAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| GetAvatarHeight | Float | Gets the avatar's height (viewpoint height) |
+| CheckAvatarHasVRCAvatarDescriptor | Bool | Checks whether the avatar has a VRCAvatarDescriptor |
+| CheckAvatarIsVRM | Bool | Checks whether the avatar is VRM |
+| CheckAvatarHasTandO | Bool | Checks whether the avatar has AvatarOptimizer's TraceAndOptimize |
+| GetAvatarDescriptor | VRCAvatarDescriptor | Gets the avatar's VRCAvatarDescriptor |
+| GetPipelineManager | PipelineManager | Gets the avatar's PipelineManager |
+
+```csharp
+public static float GetAvatarHeight(GameObject avatar);
+public static bool CheckAvatarHasVRCAvatarDescriptor(GameObject avatar);
+public static bool CheckAvatarIsVRM(GameObject avatar);
+public static bool CheckAvatarHasTandO(GameObject avatar);
+public static VRCAvatarDescriptor GetAvatarDescriptor(GameObject avatar);
+public static VRC.Core.PipelineManager GetPipelineManager(GameObject avatar);
+```
+
+* `GetAvatarHeight` returns the Y coordinate of the VRCAvatarDescriptor's `ViewPosition`. Returns `0` if there is no VRCAvatarDescriptor.
+* `CheckAvatarHasVRCAvatarDescriptor` returns `false` if `avatar` is `null`.
+* `CheckAvatarIsVRM` always returns `false` if VRM Converter for VRChat is not installed.
+* `CheckAvatarHasTandO` always returns `false` if AvatarOptimizer is not installed.
+
+# VRMAPI
+* * *
+Available only when VRM Converter for VRChat is installed (when `HAS_VRM` is defined).
+
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| ImportVRM | Void | Imports a VRM file and shows the conversion window |
+
+```csharp
+public static void ImportVRM(string path = null);
+```
+
+* If `path` is omitted, a file selection dialog is shown.
+* Files inside the project's `Assets` cannot be specified.
+* The imported VRM is saved to `Assets/VRM/{file name}.prefab`.

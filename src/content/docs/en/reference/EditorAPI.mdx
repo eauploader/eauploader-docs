@@ -1,0 +1,109 @@
+---
+title: 'EAUploader.Editor.API'
+description: 'EAUploader.Editor.API namespace'
+sidebar:
+  order: 1
+---
+
+Public API related to EAUploader as a whole, languages, and uploading.
+Defined in `Editor/Public EAUploader API/EAUploader.Editor.API.cs`.
+
+```csharp
+using EAUploader.Editor.API;
+```
+
+| Class           | Description |
+| --------------- | ----------- |
+| CoreAPI | Provides public APIs related to EAUploader as a whole |
+| LanguageAPI | Provides public APIs related to languages |
+| UploadAPI | Provides public APIs related to uploading |
+
+# CoreAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| SelectedPrefabPath | String | Gets or sets the path of the currently selected prefab |
+| SelectedPrefabPathChanged | Event | Raised when the path of the selected prefab changes |
+| HasVRM | Bool | Gets whether VRM is available in EAUploader |
+| HasAvatarOptimizer | Bool | Gets whether the Avatar Optimizer package is available |
+| GetVersion | String | Gets the current version of EAUploader |
+| Reload | Void | Reloads (initializes) EAUploader |
+
+```csharp
+public static string SelectedPrefabPath { get; set; }
+public static event Action<string> SelectedPrefabPathChanged;
+public static bool HasVRM { get; }
+public static bool HasAvatarOptimizer { get; }
+public static string GetVersion(bool noText = false);
+public static void Reload();
+```
+
+* `SelectedPrefabPath` is `null` when no avatar is selected. Setting a value raises `SelectedPrefabPathChanged`.
+* `GetVersion` returns only the version number (e.g., `1.4.6`) when `noText` is `true`, and a string including descriptive text such as "Version: 1.4.6" when `false`.
+* `Reload` does the same as "EAUploader" → "Reload" in the menu. The selected prefab is cleared.
+
+# LanguageAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| GetCurrentLanguage | String | Gets the current language code |
+| Localize | Void | Localizes the text of the specified VisualElement and its children |
+| LocalizeFromJsonFile | Void | Localizes the text of the specified VisualElement and its children using the specified JSON files |
+| GetLocalizedTextFromJsonFile | String | Gets the localized text for the specified key from the specified JSON files |
+| ChangeLanguage | Void | Changes the application's language |
+| GetAvailableLanguages | List | Gets the list of available languages |
+
+```csharp
+public static string GetCurrentLanguage();
+public static void Localize(VisualElement root);
+public static void LocalizeFromJsonFile(VisualElement root, string localizationFolderPath);
+public static string GetLocalizedTextFromJsonFile(string key, string localizationFolderPath);
+public static void ChangeLanguage(string language);
+public static List<LanguageInfo> GetAvailableLanguages();
+```
+
+* Language codes are `en`, `ja`, and `ko`.
+* `Localize` localizes using EAUploader's own translation files. To localize your extension's own strings, use `LocalizeFromJsonFile`.
+* For the format of the JSON files used by `LocalizeFromJsonFile` and `GetLocalizedTextFromJsonFile`, see "[Quick Start Guidance](/en/for_tooldev/extension/#json-file-format)".
+* `GetLocalizedTextFromJsonFile` returns the key as is if no corresponding text is found.
+* `ChangeLanguage` changes the language in the settings file. EAUploader needs to be restarted to switch the display.
+* `LanguageInfo` has `name` (language code) and `display` (display name).
+
+# UploadAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| OnUploadComplete | Event | Raised when an upload completes |
+| UploadProgressChanged | Event | Raised when the upload progress changes |
+| BuildAndTestAsync | Task | Runs an asynchronous task that builds and tests the specified prefab |
+| GetVRCAvatar | Task | Gets the VRCAvatar information of the specified prefab |
+| UploadAvatarAsync | Task | Runs an asynchronous task that uploads the specified prefab as an avatar |
+| UpdateVRCAvatar | Task | Runs an asynchronous task that updates the VRCAvatar information of the specified prefab |
+
+```csharp
+public static event EventHandler OnUploadComplete;
+public static event EventHandler<AvatarUploader.ProgressEventArgs> UploadProgressChanged;
+public static Task BuildAndTestAsync(string prefabPath);
+public static Task<VRCAvatar?> GetVRCAvatar(string prefabPath);
+public static Task UploadAvatarAsync(string prefabPath, string contentName, string contentDescription, string releaseStatus, List<string> tags, string thumbnailPath);
+public static Task UpdateVRCAvatar(string prefabPath, string contentName, string contentDescription, string releaseStatus, List<string> tags, string thumbnailPath);
+```
+
+| Argument | Contents |
+| ---- | ---- |
+| `prefabPath` | Path of the prefab |
+| `contentName` | Avatar name |
+| `contentDescription` | Avatar description |
+| `releaseStatus` | Release status (`private` / `public`) |
+| `tags` | Tags (`content_sex`, `content_adult`, `content_violence`, `content_gore`, `content_horror`, etc.) |
+| `thumbnailPath` | Path of the thumbnail image |
+
+* `ProgressEventArgs` of `UploadProgressChanged` has `Status` (description of the progress) and `Percentage` (progress from 0 to 1).
+* `GetVRCAvatar` returns `null` if you are not logged in to VRChat, if the prefab has no `PipelineManager` or Blueprint ID, or if the avatar is not found on VRChat.
+* `UploadAvatarAsync` uploads a new avatar if it does not exist on VRChat, and updates the avatar if it does.
+* `UpdateVRCAvatar` updates information such as the name and description, and the thumbnail, without rebuilding the avatar.
+* You must be logged in to the VRChat SDK to use these methods.
+
+:::caution
+`BuildAndTestAsync` and `UploadAvatarAsync` remove components that cannot be used in VRChat from the prefab before building.
+:::
