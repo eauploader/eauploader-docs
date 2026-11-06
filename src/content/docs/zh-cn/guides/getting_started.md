@@ -1,6 +1,6 @@
 ---
 title: '新用户指南'
-description: '本指南不是由头像商店制作，而是由Project EAUploader制作。'
+description: '本指南不是由Avatar商店制作，而是由Project EAUploader制作。'
 ---
 ## 注意事项与免责声明
 * * *
@@ -9,7 +9,7 @@ Project EAUploader(uslog.tech)不对使用EAUploader可能造成的任何损害�
 
 Unity存在各种bug。有时可能会发生意外的、无法解决的bug或崩溃。在最坏的情况下，项目可能无法启动（项目可能会损坏）。
 请确保备份您的项目。
-此外，请将头像数据等重要数据保存在项目外部。
+此外，请将Avatar数据等重要数据保存在项目外部。
 
 ## 安装内容说明
 * * *
@@ -25,17 +25,18 @@ Unity存在各种bug。有时可能会发生意外的、无法解决的bug或崩
 **・Creator Companion**
 - VRChat分发的Unity项目管理软件。
   通常被称为VCC。
+  也可以使用兼容软件ALCOM代替VCC。
 
 **要安装的包（在Unity中安装的额外功能和工具）**
 
 **・VRCSDK**
-- VRChat分发的用于创建、编辑和上传头像和世界的包。它会自动添加到用VCC创建的项目中。
+- VRChat分发的用于创建、编辑和上传Avatar和世界的包。它会自动添加到用VCC创建的项目中。
 
 **・EAUploader**
 - EAUploader的主体。它在Unity内运行。
 
-EAUploader中的操作会对Unity进行更改。Unity为了保持常规工作状态，不会在退出时保存更改。
-  通过EAUploader上传头像使用了VRCSDK的功能，与使用VRCSDK上传相同。
+EAUploader中的操作会对Unity进行更改。Unity通常会保持工作状态，因此退出时无需保存。
+  通过EAUploader上传Avatar使用了VRCSDK的功能，与使用VRCSDK上传相同。
 
 ### 遇到问题时
 
@@ -47,7 +48,7 @@ EAUploader中的操作会对Unity进行更改。Unity为了保持常规工作状
 - 如果URL不可用，请检查官方网站。 ▷ [https://eauploader.uslog.tech](https://eauploader.uslog.tech/)
 
 <aside>
-💡 如果遇到Unity或VRCSDK的问题，或与购买的头像、小工具或工具相关的问题
+💡 如果遇到Unity或VRCSDK的问题，或与购买的Avatar、小工具或工具相关的问题
 </aside>
 
 - 请向各自的发行方寻求支持。
@@ -191,7 +192,9 @@ EAUploader中的操作会对Unity进行更改。Unity为了保持常规工作状
 ### 创建项目
 
 项目大致分为四种类型。
-头像和世界的项目分别有Unity2019和2022的两种类型，共四种。
+Avatar和世界的项目分别有Unity2019和2022的两种类型，共四种。
+
+※显示内容可能因VCC版本而异。EAUploader仅支持Unity 2022，请务必选择Unity 2022的Avatar项目。
 
 ![Untitled](getting_started/18.png)
 
@@ -204,14 +207,14 @@ EAUploader中的操作会对Unity进行更改。Unity为了保持常规工作状
 
 您将进入项目管理屏幕。VCC包可以在此添加、更新或删除。
 
-要将EAUploader添加到VCC，请点击[这里](https://eauploader.uslog.tech/)。
+要将EAUploader添加到VCC，请点击[这里](https://eauploader.uslog.tech/install)。
 
 ![Untitled](getting_started/19.png)
 
 VCC将自动显示弹出窗口。
 点击<span style="color: #00b0f0">I Understand, Add Repository</span>将EAUploader添加到VCC。
 
-在Manage Packages中找到Easy Avatar Uploader for EAUploader，点击⊕按钮添加。
+在Manage Packages中找到Easy Avatar Uploader for VRChat，点击⊕按钮添加。
 
 ![Untitled](getting_started/20.png)
 
@@ -223,25 +226,38 @@ VCC将自动显示弹出窗口。
 
 ### 安装和启动完成
 
-您现在已准备好上传头像。
+现在已经准备好上传Avatar了。打开项目后，EAUploader的"Avatar List"（Avatar列表）界面会自动显示。
 
 ![Untitled](getting_started/22.png)
 
-如果您想使用VRM头像，请参考单独的指南“使用VRM”。
+※图片为旧版本的界面。v1.6.0之后界面设计已有变化。
 
-在项目中，您可以关闭EAUploader并作为常规Unity编辑器修改头像。
+:::tip
+EAUploader的界面支持English、日本語、한국어，暂不支持中文。建议在Avatar列表的"Settings"中将语言设置为"English"。本文档中的按钮名称等均以英文界面为准。
+:::
 
-左下角是退出按钮。要关闭EAUploader，请点击右上角的✕。
+如果您想使用VRM Avatar，请参考单独的指南"[使用VRM Avatar](/zh-cn/guides/vrm/)"。
+
+在项目中，您可以关闭EAUploader并作为常规Unity编辑器修改Avatar。
+
+要退出Unity，可以使用Avatar列表上方的"Exit Unity"按钮。要关闭EAUploader，请点击窗口右上角的✕。
+关闭的EAUploader可以从Unity顶部菜单的"EAUploader"→"Open EAUploader"重新打开。
 
 ## 工具使用方法
 * * *
-### 工具内指南
+### 帮助与本文档
 
-EAUploader内有一个指南。
+EAUploader界面各处都有"Help"按钮，可以查看各项目的说明。
 
-![Untitled](getting_started/23.png)
+各界面的使用方法请参阅本文档。
 
-有关工具、着色器、插件、上传等的说明，请阅读工具内指南。
+- [界面构成](/zh-cn/guides/overview/)
+- [导入和管理Avatar](/zh-cn/guides/import/)
+- [编辑界面](/zh-cn/guides/setup/)
+- [编辑工具](/zh-cn/guides/edit_tools/)
+- [上传Avatar](/zh-cn/guides/upload/)
+- [使用VRM Avatar](/zh-cn/guides/vrm/)
+- [更新和删除EAUploader](/zh-cn/guides/update/)
 
 ### 备份方法
 
@@ -289,7 +305,7 @@ https://vrc.group/EAUP.0512
 - 如果URL不可用，请检查官方网站。 ▷ [https://eauploader.uslog.tech](https://eauploader.uslog.tech/)
 
 <aside>
-💡 如果遇到Unity或VRCSDK的问题，或与购买的头像、小工具或工具相关的问题
+💡 如果遇到Unity或VRCSDK的问题，或与购买的Avatar、小工具或工具相关的问题
 
 </aside>
 
@@ -302,9 +318,9 @@ https://vrc.group/EAUP.0512
 
 [https://uslog.tech/contact](https://uslog.tech/contact)
 
-新用户指南 v1.1
+新用户指南 v1.3
 
-2024年7月25日
+2026年11月6日
 
 USLOG (uslog.tech)
 

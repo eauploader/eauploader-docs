@@ -226,32 +226,31 @@ Launch from <span style="color: #00b0f0">Open Project</span> in the upper right 
 
 ### Installation and Launch Complete
 
-You are now ready to upload avatars.
+You are now ready to upload avatars. When you open the project, EAUploader's "Avatar List" screen is shown automatically.
 
 ![Untitled](getting_started/22.png)
+
+*Note: The image shows the screen of an older version. The design of the screens has changed since v1.6.0.*
 
 If you want to use VRM avatars, please refer to the separate guide "[Using VRM Avatars](/en/guides/vrm/)".
 
 In the project, you can close EAUploader and modify the avatar as a regular Unity editor.
 
-The button in the lower left is the exit button. To close EAUploader, click ✕ in the upper right corner.
+To exit Unity, you can use the "Exit Unity" button at the top of the Avatar List. To close EAUploader, click ✕ in the upper right corner of the window.
 You can reopen a closed EAUploader from the Unity menu "EAUploader" → "Open EAUploader".
 
 ## How to Use the Tool
 * * *
-### In-Tool Guide
+### Help and This Documentation
 
-EAUploader has a guide within the tool.
+EAUploader has "Help" buttons throughout its screens, which show an explanation of each item.
 
-![Untitled](getting_started/23.png)
-
-Please read the in-tool guide for explanations on tools, shaders, plugins, uploads, and related work.
-
-This documentation also explains how to use each screen.
+This documentation explains how to use each screen.
 
 - [Screen Layout](/en/guides/overview/)
 - [Importing and Managing Avatars](/en/guides/import/)
-- [Setup (Adjusting Avatars)](/en/guides/setup/)
+- [Edit Screen](/en/guides/setup/)
+- [Edit Tools](/en/guides/edit_tools/)
 - [Uploading Avatars](/en/guides/upload/)
 - [Using VRM Avatars](/en/guides/vrm/)
 - [Updating and Removing EAUploader](/en/guides/update/)
@@ -315,9 +314,9 @@ For inquiries from both individuals and corporations to Project EAUploader or th
 
 [https://uslog.tech/contact](https://uslog.tech/contact)
 
-Guide for New Users v1.2
+Guide for New Users v1.3
 
-October 15, 2026
+November 6, 2026
 
 USLOG (uslog.tech)
 

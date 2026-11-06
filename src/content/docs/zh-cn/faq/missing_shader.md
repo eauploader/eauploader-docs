@@ -4,22 +4,32 @@ description: "如何解决未找到着色器错误"
 ---
 
 ## 问题出在哪里？
-表示项目中缺少绘制头像纹理（外观）所需的 "着色器"。因此，头像被绘制成粉红色，如果你按原样上传头像，将无法使用正确的外观。
+本页说明导入Avatar时显示"Shader Issues Found"，或者在EAUploader的列表中显示"Can't be uploaded"、在编辑界面显示"No Shader"时的解决方法。
+
+这表示项目中缺少绘制Avatar纹理（外观）所需的"着色器"（Shader）。因此Avatar会显示为粉红色，如果直接上传，将无法以正确的外观使用Avatar。
 
 ## 解决方法
-在项目中添加头像所需的着色器。**此时无需退出 Unity。**
+将Avatar所需的着色器添加到项目中。**此时无需退出Unity。**
 
 ## 如何找到所需的着色器
-在出售或分发头像的页面上查看手册，或在下载的头像的分发文件夹中查看手册。在 "Shaders required（所需着色器）"或 "Shaders（着色器）"部分查找着色器名称，例如在规格部分。
+请查看Avatar的销售/发布页面，或下载的Avatar文件夹中的说明书。
+在"所需着色器"或规格栏等处查找写有着色器名称的地方（日文为"シェーダー"）。
 
-### 如何查找
-在页面上按 `Ctrl + F` 键搜索页面上的字符。在此输入 "着色器 "并搜索页面。
+### 查找技巧
+在页面中按 `Ctrl + F` 可以搜索页面中的文字。输入"シェーダー"或"Shader"搜索页面即可。
 
-## 下载或添加所需的着色器到 VCC
-知道所需着色器的名称后，搜索并找到它的发布位置。不过，大多数情况下头像都是由 [lilToon](https://lilxyzw.github.io/lilToon/#/) 或 [Poiyomi Toon Shader](https://booth.pm/ja/items/4841309) 制作的，所以、如果您有任何问题，请飞到这里。
+## 下载所需着色器或将其添加到VCC
+知道所需着色器的名称后，请搜索并找到其发布地址。
+大多数Avatar使用 [lilToon](https://lilxyzw.github.io/lilToon/#/) 或 [Poiyomi Toon Shader](https://booth.pm/ja/items/4841309) 制作，如有困难请从这里查看。
 
-### 我们建议您将其添加到 VCC 中！
-着色器也像阿凡达一样发布在 .unitypackage 中，但强烈建议在 **VCC 注册并从 VCC 将着色器添加到您的项目中，就像您将 EAUploader 添加到您的项目中一样。** 着色器更新频繁，在 VCC 中管理着色器便于更新，如果创建了多个项目，也便于添加着色器。
+### 推荐添加到VCC！
+着色器也会像Avatar一样以.unitypackage形式发布。.unitypackage可以通过EAUploader的Avatar列表中"Import"窗口的"Import Shaders"按钮导入。
+但是，就像将EAUploader添加到项目中一样，**强烈建议先在VCC中注册，再从VCC将着色器添加到项目中。**
+着色器经常更新，用VCC管理可以轻松更新，在创建多个项目时也便于添加。
 
-## 将着色器添加到项目中并返回 Unity
-添加着色器后，请返回 Unity。头像上设置的着色器会添加到项目中，项目会自动将着色器应用到头像上。** 确保没有着色器错误，然后上传头像！
+## 将着色器添加到项目并返回Unity
+添加着色器后，返回Unity。当Avatar所设置的着色器被添加到项目中后，**着色器会自动应用到Avatar上。**
+确认没有出现着色器错误后，就可以上传Avatar了！
+
+项目中已安装的着色器可以通过Avatar列表中"Import"窗口的"Show existing shaders"按钮确认。
+此外，如果Avatar的编辑界面显示"Ready to upload"，则没有问题。

@@ -6,7 +6,7 @@ sidebar:
 ---
 
 プレハブの操作、情報の取得に関わる公開APIです。
-`Editor/Public EAUploader API/EAUploader.Editor.Prefab.API.cs`で定義されています。
+`Editor/Public EAUploader API/`の`EAUploader.Editor.Prefab.API.cs`、`EAUploader.Editor.PrefabPreview.API.cs`、`EAUploader.Editor.Shader.API.cs`、`EAUploader.Editor.PrefabUtility.API.cs`、`EAUploader.Editor.VRM.API.cs`で定義されています（１クラス１ファイル）。
 
 ```csharp
 using EAUploader.Editor.Prefab.API;
@@ -28,10 +28,10 @@ using EAUploader.Editor.Prefab.API;
 * * *
 | Method | Type | Description |
 | ------ | ---- | ----------- |
-| UpdatePrefabInfo | Void | プレハブ情報（PrefabManager.json）を更新します |
-| ImportPrefab | Void | 指定したパスのプレハブをEAUploaderに取り込みます |
+| UpdatePrefabInfo | Void | 管理用Prefabを初期化し直します（管理フォルダ、移行、不足しているプレビュー画像） |
+| ImportPrefab | Void | 指定したパスのプレハブをEAUploaderに取り込みます（管理用Prefab Variantを作成又は更新） |
 | GetPrefab | GameObject | 指定したパスのプレハブを取得します |
-| ShowDeletePrefabDialog | Bool | プレハブの削除ダイアログを表示します |
+| ShowDeletePrefabDialog | Bool | プレハブの削除確認を表示します |
 | DeletePrefabPreview | Void | 指定したパスのプレハブのプレビュー画像を削除します |
 | PinPrefab | Void | 指定したパスのプレハブのピン留めを切り替えます |
 | GetAvatarDescriptor | VRCAvatarDescriptor | 指定したパスのプレハブのVRCAvatarDescriptorを取得します |
@@ -42,7 +42,8 @@ using EAUploader.Editor.Prefab.API;
 public static void UpdatePrefabInfo();
 public static void ImportPrefab(string prefabPath);
 public static GameObject GetPrefab(string prefabPath);
-public static bool ShowDeletePrefabDialog(string prefabPath);
+public static bool ShowDeletePrefabDialog(string prefabPath, Action<bool> completed);
+[Obsolete] public static bool ShowDeletePrefabDialog(string prefabPath);
 public static void DeletePrefabPreview(string prefabPath);
 public static void PinPrefab(string prefabPath);
 public static VRCAvatarDescriptor GetAvatarDescriptor(string prefabPath);
@@ -51,8 +52,9 @@ public static void SavePrefab(GameObject prefab, string path);
 ```
 
 * `GetPrefab`、`GetAvatarDescriptor`は、プレハブが見つからない場合`null`を返します。
-* `ImportPrefab`は、プレハブに`EAUploaderMeta`コンポーネントを追加し、プレビュー画像を生成して、モデルの管理の一覧を更新します。
-* `ShowDeletePrefabDialog`は、ユーザーが削除を選択した場合にプレハブとプレビュー画像を削除し、`true`を返します。
+* `ImportPrefab`は、管理されていないプレハブの場合は管理用Prefab Variant（`Assets/EAUploader/Prefabs/<アイテム名>/`）を作成し、管理用Prefabの場合は情報を更新します。元のプレハブは変更しません。`Assets/`の外、`Assets/EAUploader/`の中のプレハブ、既にVariantがあるプレハブからは作成しません。
+* `ShowDeletePrefabDialog(path, completed)`は、EAUploaderのウィンドウ内に削除確認のモーダルを開き、モーダルを開けた場合に`true`を返します。削除が完了すると`completed(true)`、キャンセルすると`completed(false)`が呼ばれます。プレハブと一緒に、元のプレハブやそのアイテムでしか使われていないマテリアル・テクスチャも削除されます。
+* 引数が１つの`ShowDeletePrefabDialog(path)`は`[Obsolete]`です。互換性のために、Unityの標準の確認ダイアログを表示し、削除が完了した場合に`true`を返します。
 * `PinPrefab`は、ピン留めされていない場合はピン留めし、ピン留めされている場合は解除します。
 * `SavePrefab`は、`GameObject`を指定したパスにプレハブとして保存し、`ImportPrefab`を実行します。
 
@@ -78,8 +80,8 @@ public static string GetPreviewImagePath(string prefabPath);
 public static Texture2D GetPrefabPreview(string prefabPath);
 ```
 
-* プレビュー画像は`Assets/EAUploader/PrefabPreviews/{プレハブ名}.png`に保存されます。
-* `GeneratePreview`は、1080×1080の画像を生成します。
+* プレビュー画像は`Assets/EAUploader/PrefabPreviews/{PrefabのGUID}.png`に保存されます。名前を変えてもプレビュー画像は引き継がれます。
+* `GeneratePreview`は、1200×900の画像を生成します。
 * `GetPrefabPreview`は、プレビュー画像が存在しない場合`null`を返します。
 
 # ShaderAPI

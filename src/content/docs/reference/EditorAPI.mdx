@@ -38,8 +38,9 @@ public static string GetVersion(bool noText = false);
 public static void Reload();
 ```
 
-* `SelectedPrefabPath`は、アバターが選択されていない場合`null`です。値を設定すると、`SelectedPrefabPathChanged`が発生します。
-* `GetVersion`は、`noText`が`true`の場合はバージョン番号のみ（例：`1.4.6`）、`false`の場合は「バージョン: 1.4.6」のように説明テキストを含めた文字列を返します。
+* `SelectedPrefabPath`は、アイテムが選択されていない場合`null`です。選択中のアイテムは、EAUploaderが管理しているPrefab Variant（`Assets/EAUploader/Prefabs/`以下）のパスです。値を設定すると、`SelectedPrefabPathChanged`が発生します。
+* Modular Avatarが導入されているかは、公開APIには含まれていません（内部の`EAUploaderCore.HasMA`で判定しています）。
+* `GetVersion`は、`noText`が`true`の場合はバージョン番号のみ（例：`1.6.2`）、`false`の場合は「バージョン: 1.6.2」のように説明テキストを含めた文字列を返します。
 * `Reload`は、メニューの「EAUploader」→「Reload」と同じ処理を行います。選択中のプレハブは解除されます。
 
 # LanguageAPI
@@ -100,10 +101,12 @@ public static Task UpdateVRCAvatar(string prefabPath, string contentName, string
 
 * `UploadProgressChanged`の`ProgressEventArgs`は、`Status`（進行状況の説明）と`Percentage`（0～1の進捗）を持ちます。
 * `GetVRCAvatar`は、VRChatにログインしていない場合、プレハブに`PipelineManager`又はBlueprint IDが無い場合、VRChat上にアバターが見つからない場合は`null`を返します。
-* `UploadAvatarAsync`は、VRChat上にアバターが無い場合は新規にアップロードし、ある場合はアバターを更新します。
+* `UploadAvatarAsync`は、VRChat上にアバターが無い場合は新規にアップロードし、ある場合はアバターを更新します。公開APIからのアップロードは Windows（PC）向けのみです。
+* アップロードは、Prefabのコピーをシーン上に一時的に作成して行います。Blueprint IDが無いPrefabには、アップロード前にBlueprint IDが割り当てられます。
+* ビルドとアップロードは同時に１つだけ実行できます。
 * `UpdateVRCAvatar`は、アバターを再ビルドせずに、名前や説明などの情報とサムネイルを更新します。
 * これらのメソッドを使用するには、VRChat SDKにログインしている必要があります。
 
-:::caution
-`BuildAndTestAsync`、`UploadAvatarAsync`は、ビルドの前にVRChatで使用できないコンポーネントをプレハブから削除します。
+:::note
+`BuildAndTestAsync`、`UploadAvatarAsync`は、Prefabのコピーに対してビルドを行うため、管理用Prefabは変更されません（Blueprint IDの割り当てと書き戻しを除く）。
 :::

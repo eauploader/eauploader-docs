@@ -230,32 +230,31 @@ Manage Packages の中から Easy Avatar Uploader for VRChat を探して、⊕ 
 
 ### 導入・起動完了
 
-これでアバターをアップロードする準備が整いました。
+これでアバターをアップロードする準備が整いました。プロジェクトを開くと、EAUploader の「アバター一覧」画面が自動で表示されます。
 
 ![Untitled](getting_started/22.png)
+
+※画像は以前のバージョンの画面です。v1.6.0 以降は画面のデザインが変わっています。
 
 VRM アバターを使用したい場合は別ガイド「[VRMアバターを使う](/guides/vrm/)」を参照してください。
 
 プロジェクトでは EAUploader を閉じて、通常の Unity エディタとしてアバターの改変を行うことも可能です。
 
-左下は終了ボタンです。EAUploader を閉じる場合は右上の ✕ から閉じてください。
+Unity を終了する場合は、アバター一覧の上部にある「Unityを終了する」ボタンを使用できます。EAUploader を閉じる場合はウィンドウ右上の ✕ から閉じてください。
 閉じた EAUploader は、Unity 上部のメニュー「EAUploader」→「Open EAUploader」から再び開くことができます。
 
 ## ツールの使い方
 * * *
-### ツール内のガイド
+### ヘルプとこのドキュメント
 
-EAUploader はツール内にガイドがあります。
+EAUploader の画面の各所には「ヘルプ」ボタンがあり、その項目の説明を確認できます。
 
-![Untitled](getting_started/23.png)
-
-ツールの使い方やシェーダー、プラグイン、アップロードの説明など、ツールやアバター、作業に関する説明はツール内のガイドをお読みください。
-
-また、このドキュメントでも各画面の使い方を説明しています。
+各画面の使い方は、このドキュメントで説明しています。
 
 - [画面の構成](/guides/overview/)
 - [アバターのインポートと管理](/guides/import/)
-- [セットアップ（アバターの調整）](/guides/setup/)
+- [編集画面](/guides/setup/)
+- [編集ツール](/guides/edit_tools/)
 - [アバターのアップロード](/guides/upload/)
 - [VRMアバターを使う](/guides/vrm/)
 - [EAUploaderの更新と削除](/guides/update/)
@@ -319,9 +318,9 @@ https://vrc.group/EAUP.0512
 
 [https://uslog.tech/contact](https://uslog.tech/contact)
 
-初めての方向けガイド v1.2
+初めての方向けガイド v1.3
 
-2026 年 10 月 15 日
+2026 年 11 月 6 日
 
 USLOG (uslog.tech)
 

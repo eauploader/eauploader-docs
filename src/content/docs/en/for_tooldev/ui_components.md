@@ -7,7 +7,7 @@ This document explains how to use EAUploader's stylesheets and custom UI compone
 
 EAUploader's UI is built with UI Toolkit (UXML / USS). Custom UI components are implemented under `Packages/tech.uslog.eauploader/Editor/Resources/UI/Components`.
 
-This document is based on EAUploader v1.4.6.
+This document is based on EAUploader v1.6.2.
 
 ## Applying Stylesheets
 * * *
@@ -33,6 +33,16 @@ They can also be obtained from `EAUResourceAPI.EAUStyles` and `EAUResourceAPI.EA
 :::note
 `MaterialIcon` uses the font defined in `UI/styles`. When using `MaterialIcon`, always apply `UI/styles`.
 :::
+
+### Matching the Theme
+EAUploader's color schemes (Light, Dark, Pastel) are switched by a USS class (`white`, `dark`, `pastel`) on the window root.
+To give your own window the same colors as EAUploader, use `EAUploader.UI.ThemeUtility`.
+
+```csharp
+using EAUploader.UI;
+
+ThemeUtility.ApplyTheme(rootVisualElement, ThemeUtility.GetCurrentTheme());
+```
 
 ### Commonly Used Utility Classes
 | Class | Contents |
@@ -145,7 +155,7 @@ A "Help" button. When pressed, it shows the help message with the number specifi
 ```
 
 :::note
-Help messages are loaded from `Editor/Resources/Message` of EAUploader itself. As of v1.4.6, extensions cannot add their own help messages.
+Help messages are loaded from `Editor/Resources/Message` of EAUploader itself and shown as a modal inside the EAUploader window. As of v1.6.2, extensions cannot add their own help messages.
 :::
 
 ### Preview
@@ -165,6 +175,8 @@ preview.UpdatePreview(otherPrefabPath);
 | `UpdatePreview(prefabPath)` | Changes the prefab to show. |
 | `ResetPreview()` | Resets the zoom and position. |
 
+Passing a `GameObject`, as in `new Preview(container, gameObject)`, lets you preview an object being edited that is not an asset (live mode). Call `Refresh()` after changing the object's structure, `Repaint()` to only redraw, and `Dispose()` when you are done.
+
 In the public API, the same operations are available from `PreviewAPI`.
 
 ### PrefabItemButton
@@ -181,6 +193,22 @@ foreach (var prefab in PrefabManager.GetAllPrefabsWithPreview())
 
 In the public API, you can create it with `PrefabItemButtonAPI.CreatePrefabItemButton(prefab, clickAction, disabled)`.
 
+### DropdownFieldPro
+A dropdown matching EAUploader's design. Specify the options with `choices` and the selected item with `index`. Set `multiSelect` to `true` to allow multiple selection, and receive selection changes with the `selectionChanged` event.
+
+```csharp
+var dropdown = new DropdownFieldPro("", new List<string> { "Avatar", "Cloth" }, 0);
+dropdown.RegisterValueChangedCallback(evt => Debug.Log(evt.newValue));
+```
+
+### CheckBox
+A check box matching EAUploader's design. It inherits from `BaseField<bool>`.
+
+```csharp
+var checkBox = new CheckBox("I agree");
+checkBox.RegisterValueChangedCallback(evt => Debug.Log(evt.newValue));
+```
+
 ### ContentWarningsField
 A field for selecting VRChat Content Warnings tags.
 
@@ -190,8 +218,11 @@ A field for selecting VRChat Content Warnings tags.
 | `SetTags(tags)` | Sets the tags to select. |
 | `OnToggleTag` | Event raised when the tag selection changes |
 
-## Showing Dialogs
+## Showing Dialogs, Modals, and Notifications
 * * *
+EAUploader's dialogs, modals, and notifications are shown inside EAUploader's main window. Use them while the EAUploader window is open.
+
+### DialogPro
 With `EAUploader.UI.Windows.DialogPro`, you can show dialogs that look the same as EAUploader's.
 
 ```csharp
@@ -208,6 +239,36 @@ DialogPro.Show(DialogPro.DialogType.Info, "Confirm", "Do you want to continue?",
 
 `DialogType` can be `Info`, `Warning`, `Error`, or `Success`.
 If a dialog is already shown, a new dialog is not shown.
+
+### Modal
+`EAUploader.UI.EAUploader.modal` is the shared modal shown inside the EAUploader window. Show it by specifying a title, content, and buttons at the bottom.
+
+```csharp
+using EAUploader.UI.Components;
+using EAUploaderWindow = EAUploader.UI.EAUploader;
+
+var modal = EAUploaderWindow.modal;
+modal.Initialize();
+modal.setTitle("My Tool");
+modal.setContent(new Label("Hello"));
+modal.setFooter(new[]
+{
+    new Modal.ActionButton("Close", () => modal.Hide())
+});
+modal.Show();
+```
+
+### Notifications (Toasts)
+With `EAUploader.UI.EAUploader.toasts`, you can show a short notification at the edge of the screen.
+
+```csharp
+using EAUploader.UI.Components;
+using EAUploaderWindow = EAUploader.UI.EAUploader;
+
+EAUploaderWindow.toasts?.Show("Saved", type: ToastType.Success);
+```
+
+`ToastType` can be `Info`, `Success`, `Warning`, `Error`, or `Loading`.
 
 ## Localization
 * * *

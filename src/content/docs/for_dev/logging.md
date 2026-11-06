@@ -13,7 +13,7 @@ Project EAUploaderでは開発メンバーを常に募集しています！！
 * * *
 本ログ出力機能は、EAUploaderの一連の内部動作をログファイルに出力し、開発者が容易に閲覧できる機能を提供する。本機能は、開発者がより迅速に不具合解析を行う目的で提供する。
 
-本機能は`EAUploader.UI.Windows.Logger`（`Editor/Resources/UI/Windows/Logger.cs`）で実装されている。本ドキュメントは、EAUploader v1.4.6 の内容に準拠している。
+本機能は`EAUploader.UI.Windows.Logger`（`Editor/Resources/UI/Windows/Logger.cs`）で実装されている。本ドキュメントは、EAUploader v1.6.2 の内容に準拠している。
 
 # 用語
 * * *
@@ -54,7 +54,7 @@ EAUploader is starting...
 *** Environment Details ***
 Date: 2024-04-22
 Log GUID: 0123456789abcdef0123456789abcdef
-Application-Version: 1.4.6
+Application-Version: 1.6.2
 Unity-Version: 2022.3.22f1
 Editor-Platform: WindowsEditor
 Vpm-Dependency: 
@@ -110,24 +110,28 @@ EAULogger.writeEAULog("Selected setup tab.");
 
 # エラーレポート画面
 * * *
-ログ種別がERR又はEXPのログを受け取った場合、エラーレポート画面を表示する。エラーレポート画面はEAUploaderのウィンドウの中央に表示する。
+ログ種別がERR又はEXPのログを受け取り、設定ファイルの`showErrorReportWindow`が有効である場合、エラーレポート画面を表示する。エラーレポート画面はEAUploaderのメインウィンドウ内のモーダルとして表示する。
 
 エラーレポート画面には、次の内容を表示する。
 
 1. EAUploader起動後に発生したエラーログ（日時、メッセージ、トレースログ）
 2. 環境情報（EAUploaderのバージョン、Unityのバージョン、プラットフォーム、VPMパッケージの一覧）
 
-エラーレポート画面には次のボタンを配置する。
+UI Toolkitのテキスト描画を安定させるため、保持するエラーログは20万文字まで、画面に表示する内容は最新の4万文字までとする。表示を省略した場合は、その旨を表示する。
+エラーレポートの表示処理中に発生したエラーでは、エラーレポート画面を再度表示しない（再帰の防止）。
 
-1. 再起動：`Packages/tech.uslog.eauploader`を再インポートし、EAUploaderを再起動する。
-2. コピー：エラーレポートの内容をクリップボードにコピーする。
-3. OK：エラーレポート画面を閉じる。
+エラーレポート画面には次の項目を配置する。
+
+1. 「このウィンドウを今後表示しない」：チェックを入れると`showErrorReportWindow`を無効にする。アバター一覧の「設定」にある「エラーレポートウィンドウを表示する」から再度有効にできる。
+2. 再起動：`Packages/tech.uslog.eauploader`を再インポートし、EAUploaderを再起動する。
+3. コピー：エラーレポートの内容をクリップボードにコピーする。
+4. OK：エラーレポート画面を閉じる。
 
 なお、エラーレポート画面はEAUploader以外が出力したエラーログでも表示する。動作確認には、メニューの「Window」→「Error Report」（テスト用のエラーログを出力する）を使用できる。
 
 # ログレポート表示機能
 * * *
-ユーザーはインポート/設定タブの「設定」に表示した「ログレポートを表示」ボタンから、ログファイルの保存フォルダ（`EAUploaderLog`）を開くことができる。
+ユーザーはアバター一覧の「設定」に表示した「ログレポートを表示」ボタンから、ログファイルの保存フォルダ（`EAUploaderLog`）を開くことができる。
 
 「ログレポートを表示」ボタン押下時、ログファイルが保存されているフォルダを開いた旨のダイアログを表示し、ログファイルの保存フォルダをOSのファイルブラウザで開く。
 

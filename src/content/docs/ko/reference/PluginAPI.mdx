@@ -1,0 +1,83 @@
+---
+title: 'EAUploader.Editor.Plugin.API'
+description: 'EAUploader.Editor.Plugin.API namespace'
+sidebar:
+  order: 2
+---
+
+확장 기능(플러그인) 등록에 관한 공개 API입니다.
+`Editor/Public EAUploader API/EAUploader.Editor.Plugin.API.cs`에 정의되어 있습니다.
+
+```csharp
+using EAUploader.Editor.Plugin.API;
+```
+
+| Class           | Description |
+| --------------- | ----------- |
+| PluginAPI | 플러그인에 관한 공개 API를 제공하는 클래스 |
+| PluginAPI.EditorRegistration | 에디터 등록 정보를 나타내는 클래스 |
+| PluginAPI.EAUPluginAttribute | 플러그인 초기화 메서드를 지정하기 위한 속성 |
+
+# PluginAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| OnEditorRegistered | Event | 새 에디터가 등록되었을 때 발생하는 이벤트 |
+| OnEditorManagerLoad | Void | 에디터 매니저를 불러옴(초기화) |
+| RegisterEditor | Void | 새 에디터를 등록 |
+| GetRegisteredEditors | IEnumerable | 등록된 에디터 목록을 가져옴 |
+
+```csharp
+public static event EAUploaderEditorManager.EditorRegisteredHandler OnEditorRegistered;
+public static void OnEditorManagerLoad();
+public static void RegisterEditor(PluginAPI.EditorRegistration editorRegistration);
+public static IEnumerable<PluginAPI.EditorRegistration> GetRegisteredEditors();
+```
+
+* `RegisterEditor`는 `EAUploaderEditorManager.RegisterEditor`와 같은 동작을 합니다. 등록한 에디터는 편집 화면의 '편집 도구'에 표시됩니다.
+* `OnEditorManagerLoad`는 EAUploader 시작 시 호출되는 처리입니다. 일반적으로 확장 기능에서 호출할 필요는 없습니다.
+
+# PluginAPI.EditorRegistration
+* * *
+| Property | Type | Description |
+| ------ | ---- | ----------- |
+| MenuName | String | 실행 버튼을 눌렀을 때 실행할 메뉴 경로 |
+| EditorName | String | 편집 도구 목록에 표시할 이름 |
+| Description | String | 설명 |
+| Version | String | 버전 |
+| Author | String | 제작자 |
+| Url | String | 지원 페이지 등의 URL |
+| Requirement | Func&lt;string, bool&gt; | 사용 가능 여부를 판단하는 메서드. 인수로 선택한 프리팹의 경로가 전달됨 |
+| RequirementDescription | String | 사용할 수 없을 때 표시할 메시지 |
+
+각 속성의 자세한 내용은 '[빠른 시작 가이드](/ko/for_tooldev/extension/)'를 참조하세요.
+
+# PluginAPI.EAUPluginAttribute
+* * *
+플러그인 초기화 메서드를 지정하기 위한 속성입니다.
+
+:::caution
+v1.6.2 시점에서는 이 속성을 붙인 메서드가 EAUploader 시작 시 호출되지 않습니다.
+초기화 메서드에는 `EAUploader` 네임스페이스의 `EAUPlugin` 속성(`EAUploader.EAUPluginAttribute`)을 사용하세요.
+:::
+
+```csharp
+using EAUploader;
+using EAUploader.Editor.Plugin.API;
+
+public static class MyPlugin
+{
+    [EAUPlugin] // EAUploader.EAUPluginAttribute
+    private static void Initialize()
+    {
+        PluginAPI.RegisterEditor(new PluginAPI.EditorRegistration
+        {
+            MenuName = "Tools/My Avatar Tool",
+            EditorName = "My Avatar Tool",
+            Description = "Description of my tool",
+            Version = "0.1.0",
+            Author = "Your Name",
+        });
+    }
+}
+```

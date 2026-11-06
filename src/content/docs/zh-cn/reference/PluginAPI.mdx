@@ -1,0 +1,83 @@
+---
+title: 'EAUploader.Editor.Plugin.API'
+description: 'EAUploader.Editor.Plugin.API namespace'
+sidebar:
+  order: 2
+---
+
+与扩展功能（插件）注册相关的公开API。
+定义在`Editor/Public EAUploader API/EAUploader.Editor.Plugin.API.cs`中。
+
+```csharp
+using EAUploader.Editor.Plugin.API;
+```
+
+| 类           | 说明 |
+| --------------- | ----------- |
+| PluginAPI | 提供与插件相关的公开API |
+| PluginAPI.EditorRegistration | 表示编辑器注册信息 |
+| PluginAPI.EAUPluginAttribute | 用于指定插件初始化方法的特性 |
+
+# PluginAPI
+* * *
+| 方法 | 类型 | 说明 |
+| ------ | ---- | ----------- |
+| OnEditorRegistered | Event | 注册新编辑器时触发 |
+| OnEditorManagerLoad | Void | 加载（初始化）编辑器管理器 |
+| RegisterEditor | Void | 注册新的编辑器 |
+| GetRegisteredEditors | IEnumerable | 获取已注册编辑器的列表 |
+
+```csharp
+public static event EAUploaderEditorManager.EditorRegisteredHandler OnEditorRegistered;
+public static void OnEditorManagerLoad();
+public static void RegisterEditor(PluginAPI.EditorRegistration editorRegistration);
+public static IEnumerable<PluginAPI.EditorRegistration> GetRegisteredEditors();
+```
+
+* `RegisterEditor`与`EAUploaderEditorManager.RegisterEditor`作用相同。已注册的编辑器会显示在编辑界面的"Edit tool"中。
+* `OnEditorManagerLoad`是EAUploader启动时调用的处理。扩展功能通常无需调用。
+
+# PluginAPI.EditorRegistration
+* * *
+| 属性 | 类型 | 说明 |
+| ------ | ---- | ----------- |
+| MenuName | String | 按下按钮时执行的菜单路径 |
+| EditorName | String | 编辑工具列表中显示的名称 |
+| Description | String | 说明 |
+| Version | String | 版本 |
+| Author | String | 作者 |
+| Url | String | 支持页面等的URL |
+| Requirement | Func&lt;string, bool&gt; | 判断编辑器是否可用的方法。参数为所选预制体的路径 |
+| RequirementDescription | String | 编辑器不可用时显示的消息 |
+
+各属性的详细内容请参阅"[快速入门指南](/zh-cn/for_tooldev/extension/)"。
+
+# PluginAPI.EAUPluginAttribute
+* * *
+用于指定插件初始化方法的特性。
+
+:::caution
+截至v1.6.2，带有该特性的方法不会在EAUploader启动时被调用。
+初始化方法请使用`EAUploader`命名空间中的`EAUPlugin`特性（`EAUploader.EAUPluginAttribute`）。
+:::
+
+```csharp
+using EAUploader;
+using EAUploader.Editor.Plugin.API;
+
+public static class MyPlugin
+{
+    [EAUPlugin] // EAUploader.EAUPluginAttribute
+    private static void Initialize()
+    {
+        PluginAPI.RegisterEditor(new PluginAPI.EditorRegistration
+        {
+            MenuName = "Tools/My Avatar Tool",
+            EditorName = "My Avatar Tool",
+            Description = "Description of my tool",
+            Version = "0.1.0",
+            Author = "Your Name",
+        });
+    }
+}
+```

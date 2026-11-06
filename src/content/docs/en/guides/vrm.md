@@ -21,7 +21,7 @@ VRM Converter for VRChat **only supports VRM 0.x and does not support VRM 1.x.**
 Add VRM Converter for VRChat to your project from VCC (or ALCOM), or download it from the [distribution page](https://booth.pm/ja/items/1025226) and import it.
 To use VRM with EAUploader, both VRM Converter for VRChat and the package for loading VRM (UniVRM) must be installed in the project.
 
-Once installed, the <span style="color: #00b0f0">Import VRM</span> button in the Import/Settings tab becomes available.
+Once installed, the <span style="color: #00b0f0">Import VRM</span> button in the import window becomes available.
 
 :::note
 If the button is still not available after installing, run "EAUploader" → "Reload" from the Unity menu, or restart Unity.
@@ -29,10 +29,12 @@ If the button is still not available after installing, run "EAUploader" → "Rel
 
 ## Importing VRM
 * * *
-Press the <span style="color: #00b0f0">Import VRM</span> button in the Import/Settings tab and select a `.vrm` file.
-You can also import by dragging and dropping a `.vrm` file onto the "Manage Model" list.
+Press <span style="color: #00b0f0">Import</span> on the Avatar List to open the import window, and select a `.vrm` file with the <span style="color: #00b0f0">Import VRM</span> button.
+You can also import by dragging and dropping a `.vrm` file onto the Avatar List.
 
-The imported VRM is saved as a prefab in the project's `Assets/VRM` folder. When the import is complete, the conversion window opens.
+The imported VRM is saved as a prefab in the project's `Assets/VRM` folder and is also added to the Avatar List. When the import is complete, the conversion window opens.
+
+The "Outfit Settings" window may appear right after importing, but a VRM avatar automatically gets the genre "Avatar" once it is converted.
 
 :::caution
 You cannot select `.vrm` files inside the project's `Assets` folder. Select a file outside the project.
@@ -40,7 +42,7 @@ You cannot select `.vrm` files inside the project's `Assets` folder. Select a fi
 
 ## Converting to a VRChat Avatar
 * * *
-Set each item in the conversion window and press the <span style="color: #00b0f0">Comvert</span> button.
+Set each item in the conversion window and press the <span style="color: #00b0f0">Comvert</span> (convert) button.
 
 | Item | Description |
 | ---- | ---- |
@@ -55,8 +57,8 @@ Set each item in the conversion window and press the <span style="color: #00b0f0
 
 For details on each item, also check the documentation of VRM Converter for VRChat.
 
-### Converting Again
-For a VRM avatar you have already imported, select it in the Setup tab and press the <span style="color: #00b0f0">Convert to VRChat Avatar</span> button shown under the edit tools to reopen the conversion window.
+### Reopening the Conversion Window
+VRM avatars that have not been converted show "Needs conversion" on the Avatar List. Click the card to open the Edit screen, and press the <span style="color: #00b0f0">Convert to VRChat Avatar</span> button shown on the left to open the conversion window.
 
 Even if you convert the same avatar again, the Blueprint ID of an avatar you have already uploaded is kept.
 
@@ -66,11 +68,11 @@ Even if you convert the same avatar again, the Blueprint ID of an avatar you hav
 Converted VRM avatars need their viewpoint position set.
 :::
 
-Select the avatar in the Setup tab, open the <span style="color: #00b0f0">Viewpoint Position Editor</span> from the edit tools, and adjust the viewpoint.
-See "[Setup (Adjusting Avatars)](/en/guides/setup/#viewpoint-position-editor)" for how to use it.
+Open the Edit screen, open the <span style="color: #00b0f0">Viewpoint Position Editor</span> from the edit tools, and adjust the viewpoint.
+See "[Edit Tools](/en/guides/edit_tools/#viewpoint-position-editor)" for how to use it.
 
 ## Uploading
 * * *
 Once conversion and the viewpoint position setting are complete, you can upload it just like a regular avatar. See "[Uploading Avatars](/en/guides/upload/)".
 
-Shaders used by VRM avatars (such as MToon) may not support Android (Quest). If you upload for Android, turn on "For Quest" when converting.
+Shaders used by VRM avatars (such as MToon) may not support Android (Quest). If you also upload for Quest (Android), turn on "For Quest" when converting.

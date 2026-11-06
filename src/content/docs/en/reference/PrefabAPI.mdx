@@ -6,7 +6,7 @@ sidebar:
 ---
 
 Public API related to operating on prefabs and getting their information.
-Defined in `Editor/Public EAUploader API/EAUploader.Editor.Prefab.API.cs`.
+Defined in `EAUploader.Editor.Prefab.API.cs`, `EAUploader.Editor.PrefabPreview.API.cs`, `EAUploader.Editor.Shader.API.cs`, `EAUploader.Editor.PrefabUtility.API.cs`, and `EAUploader.Editor.VRM.API.cs` in `Editor/Public EAUploader API/` (one class per file).
 
 ```csharp
 using EAUploader.Editor.Prefab.API;
@@ -28,10 +28,10 @@ When using methods that return `VRCAvatarDescriptor` or `PipelineManager`, add r
 * * *
 | Method | Type | Description |
 | ------ | ---- | ----------- |
-| UpdatePrefabInfo | Void | Updates the prefab information (PrefabManager.json) |
-| ImportPrefab | Void | Brings the prefab at the specified path into EAUploader |
+| UpdatePrefabInfo | Void | Re-initializes the managed prefabs (managed folder, migration, missing preview images) |
+| ImportPrefab | Void | Brings the prefab at the specified path into EAUploader (creates or updates a managed Prefab Variant) |
 | GetPrefab | GameObject | Gets the prefab at the specified path |
-| ShowDeletePrefabDialog | Bool | Shows the prefab deletion dialog |
+| ShowDeletePrefabDialog | Bool | Shows the prefab deletion confirmation |
 | DeletePrefabPreview | Void | Deletes the preview image of the prefab at the specified path |
 | PinPrefab | Void | Toggles pinning of the prefab at the specified path |
 | GetAvatarDescriptor | VRCAvatarDescriptor | Gets the VRCAvatarDescriptor of the prefab at the specified path |
@@ -42,7 +42,8 @@ When using methods that return `VRCAvatarDescriptor` or `PipelineManager`, add r
 public static void UpdatePrefabInfo();
 public static void ImportPrefab(string prefabPath);
 public static GameObject GetPrefab(string prefabPath);
-public static bool ShowDeletePrefabDialog(string prefabPath);
+public static bool ShowDeletePrefabDialog(string prefabPath, Action<bool> completed);
+[Obsolete] public static bool ShowDeletePrefabDialog(string prefabPath);
 public static void DeletePrefabPreview(string prefabPath);
 public static void PinPrefab(string prefabPath);
 public static VRCAvatarDescriptor GetAvatarDescriptor(string prefabPath);
@@ -51,8 +52,9 @@ public static void SavePrefab(GameObject prefab, string path);
 ```
 
 * `GetPrefab` and `GetAvatarDescriptor` return `null` if the prefab is not found.
-* `ImportPrefab` adds an `EAUploaderMeta` component to the prefab, generates a preview image, and updates the Manage Model list.
-* `ShowDeletePrefabDialog` deletes the prefab and its preview image and returns `true` if the user chooses to delete.
+* `ImportPrefab` creates a managed Prefab Variant (`Assets/EAUploader/Prefabs/<item name>/`) for an unmanaged prefab, and updates the information for a managed one. The source prefab is not changed. No Variant is created for prefabs outside `Assets/`, inside `Assets/EAUploader/`, or that already have a Variant.
+* `ShowDeletePrefabDialog(path, completed)` opens the deletion confirmation modal inside the EAUploader window and returns `true` if the modal opened. `completed(true)` is called when deletion completes, and `completed(false)` when cancelled. Together with the prefab, the source prefab and materials and textures used only by that item are also deleted.
+* The one-argument `ShowDeletePrefabDialog(path)` is `[Obsolete]`. For compatibility, it shows Unity's standard confirmation dialog and returns `true` when deletion completes.
 * `PinPrefab` pins the prefab if it is not pinned, and unpins it if it is.
 * `SavePrefab` saves the `GameObject` as a prefab at the specified path and runs `ImportPrefab`.
 
@@ -78,8 +80,8 @@ public static string GetPreviewImagePath(string prefabPath);
 public static Texture2D GetPrefabPreview(string prefabPath);
 ```
 
-* Preview images are saved to `Assets/EAUploader/PrefabPreviews/{prefab name}.png`.
-* `GeneratePreview` generates a 1080×1080 image.
+* Preview images are saved to `Assets/EAUploader/PrefabPreviews/{Prefab GUID}.png`. Preview images are kept when renaming.
+* `GeneratePreview` generates a 1200×900 image.
 * `GetPrefabPreview` returns `null` if no preview image exists.
 
 # ShaderAPI

@@ -1,0 +1,115 @@
+---
+title: 'EAUploader.Editor.Resource.API'
+description: 'EAUploader.Editor.Resource.API namespace'
+sidebar:
+  order: 4
+---
+
+提供EAUploader样式和自定义UI组件功能的公开API。
+定义在`Editor/Public EAUploader API/EAUploader.Editor.Resource.API.cs`中。
+
+```csharp
+using EAUploader.Editor.Resource.API;
+```
+
+各组件的详细内容请参阅"[UI组件](/zh-cn/for_tooldev/ui_components/)"。
+
+| 类           | 说明 |
+| --------------- | ----------- |
+| EAUResourceAPI | 提供EAUploader的样式表 |
+| HelpButtonAPI | 显示帮助消息 |
+| LinkAPI | 创建链接 |
+| MaterialIconAPI | 创建Material图标 |
+| PrefabItemButtonAPI | 创建预制体物品按钮 |
+| ShadowButtonAPI | 创建带阴影的按钮 |
+| PreviewAPI | 提供可交互的Avatar预览 |
+
+# EAUResourceAPI
+* * *
+| 属性 | 类型 | 说明 |
+| ------ | ---- | ----------- |
+| EAUStyles | StyleSheet | EAUploader的样式表 |
+| EAUTailwind | StyleSheet | Tailwind样式表 |
+
+```csharp
+public static StyleSheet EAUStyles { get; }
+public static StyleSheet EAUTailwind { get; }
+```
+
+* 它们在EAUploader主窗口显示时加载。如果主窗口从未显示过，则为`null`。要确保获取，请使用`Resources.Load<StyleSheet>("UI/styles")`和`Resources.Load<StyleSheet>("UI/tailwind")`。
+
+# HelpButtonAPI
+* * *
+| 方法 | 类型 | 说明 |
+| ------ | ---- | ----------- |
+| ShowMessage | Void | 显示指定消息编号的消息窗口 |
+
+```csharp
+public static void ShowMessage(int msgNum);
+```
+
+* 消息从EAUploader本体的`Editor/Resources/Message/{语言代码}/{消息编号}.txt`读取，并以模态窗口的形式显示在EAUploader窗口内。正在使用的消息编号请参阅"[多语言支持与资源](/zh-cn/for_dev/localization/#正在使用的消息编号)"。
+
+# LinkAPI
+* * *
+| 方法 | 类型 | 说明 |
+| ------ | ---- | ----------- |
+| CreateLink | VisualElement | 使用指定的文本和URL创建链接 |
+
+```csharp
+public static VisualElement CreateLink(string text, string url);
+```
+
+# MaterialIconAPI
+* * *
+| 方法 | 类型 | 说明 |
+| ------ | ---- | ----------- |
+| CreateMaterialIcon | VisualElement | 使用指定的图标名称创建Material图标 |
+
+```csharp
+public static VisualElement CreateMaterialIcon(string iconName);
+```
+
+* 请指定[Material Icons](https://fonts.google.com/icons?icon.set=Material+Icons)中的图标名称。
+* 要显示图标，需要应用`EAUStyles`（`UI/styles`）。
+
+# PrefabItemButtonAPI
+* * *
+| 方法 | 类型 | 说明 |
+| ------ | ---- | ----------- |
+| CreatePrefabItemButton | VisualElement | 使用指定的预制体信息和点击操作创建预制体物品按钮 |
+
+```csharp
+public static VisualElement CreatePrefabItemButton(PrefabInfo prefab, Action clickAction, bool disabled = false);
+```
+
+* `PrefabInfo`为`EAUploader.CustomPrefabUtility.PrefabInfo`。带预览图的列表可以通过`PrefabManager.GetAllPrefabsWithPreview()`获取。
+* `disabled`为`true`时，无法上传的Avatar的按钮无法按下。
+
+# ShadowButtonAPI
+* * *
+| 方法 | 类型 | 说明 |
+| ------ | ---- | ----------- |
+| CreateShadowButton | VisualElement | 使用指定的文本和点击操作创建带阴影的按钮 |
+
+```csharp
+public static VisualElement CreateShadowButton(string text, Action clickAction);
+```
+
+# PreviewAPI
+* * *
+该预览不是Texture2D的预览，而是可以用鼠标操作的渲染预览。
+
+| 方法 | 类型 | 说明 |
+| ------ | ---- | ----------- |
+| CreatePreview | Preview | 使用指定的根元素和预制体路径创建预览 |
+| ShowContent | Void | 显示预览内容 |
+| UpdatePreview | Void | 使用指定的预制体路径更新预览 |
+| ResetPreview | Void | 重置预览 |
+
+```csharp
+public static Preview CreatePreview(VisualElement rootElement, string prefabPath);
+public static void ShowContent(Preview preview);
+public static void UpdatePreview(Preview preview, string prefabPath);
+public static void ResetPreview(Preview preview);
+```

@@ -6,19 +6,23 @@ description: 'How to create extensions that support EAUploader'
 # EAUploader Extension Development Quick Start Guidance
 
 This document explains how to develop extensions for EAUploader.
-Extensions are added to "Edit tool" in EAUploader's "Setup" tab, and can perform any processing on the avatar selected by the user.
+Extensions are added to "Edit tool" on EAUploader's Edit screen, and can perform any processing on the item selected by the user.
 
-For implementation details, please refer to the "Viewpoint Position Editor" extension that comes built into EAUploader.
+As an example of registration, also see the "Viewpoint Position Editor" extension that comes built into EAUploader.
 Its code can be found under `Packages/tech.uslog.eauploader/Editor/Resources/UI/TabContents/Setup/Editor/ViewpointPositionEditor`.
 
-This document is based on EAUploader v1.4.6.
+This document is based on EAUploader v1.6.2.
 
 ## How Extensions Work
 * * *
 1. At startup (when Unity starts or after scripts are recompiled), EAUploader finds static methods with the `EAUPlugin` attribute and calls them.
 2. In that method, the extension calls `EAUploaderEditorManager.RegisterEditor` to register its own information (editor registration information).
-3. EAUploader lists the registered extensions in "Edit tool" in the Setup tab.
+3. EAUploader lists the registered extensions in "Edit tool" on the Edit screen.
 4. When the user presses an extension's button, the Unity menu specified in `MenuName` of the editor registration information is executed. The extension opens its own window from that menu.
+
+:::note
+The edit tools built into EAUploader are shown overlaid inside the EAUploader window, but this mechanism is internal and cannot be used by extensions. Extensions should open their own window as a regular `EditorWindow`.
+:::
 
 ## 1. Create a Folder for the Package
 * * *
@@ -29,108 +33,10 @@ Any name is fine.
 
 ## 2. Add the Source Code
 * * *
-### Sample Source
-
-Add source code like the following to the folder created in step 1.
-Below, based on this sample source, we explain the code you should write when developing an extension.
-*This is an excerpt of the parts of ViewpointPositionEditor.cs needed for the explanation, so it will not work if copied and pasted as is.*
-Please use it only as a reference. For a minimal sample that works as is, see "[Minimal Sample](#minimal-sample)" below.
-
-ViewpointPositionEditor.cs
-
-```csharp
-using UnityEditor;
-using UnityEngine;
-using UnityEngine.UIElements;
-using EAUploader.CustomPrefabUtility;
-using System;
-
-namespace EAUploader.UI.Setup
-{
-    public class ViewpointPositionEditor : EditorWindow
-    {
-        private const string LOCALIZATION_FOLDER_PATH = "Packages/tech.uslog.eauploader/Editor/Resources/UI/TabContents/Setup/Editor/ViewpointPositionEditor/Localization";
-        private ViewpointPositionEditorUI _editorUI;
-        private PreviewRenderer _previewRenderer;
-        private GameObject _gameObject;
-
-        [EAUPlugin]
-        private static void Initialize()
-        {
-            string editorName = LanguageUtility.T7eFromJsonFile("Viewpoint Position Editor", LOCALIZATION_FOLDER_PATH);
-            string description = LanguageUtility.T7eFromJsonFile("A powerful viewpoint position editor for Unity.", LOCALIZATION_FOLDER_PATH);
-            string requirementDescription = LanguageUtility.T7eFromJsonFile("The selected model must have a VRCAvatarDescriptor component.", LOCALIZATION_FOLDER_PATH);
-
-            var editorRegistration = new EditorRegistration
-            {
-                MenuName = "EAUploader/ViewpointPositionEditor",
-                EditorName = editorName,
-                Description = description,
-                Version = "0.1.0",
-                Author = "USLOG",
-                Url = "https://uslog.tech/eauploader",
-                Requirement = CheckAvatarHasVRCAvatarDescriptor,
-                RequirementDescription = requirementDescription
-            };
-
-            EAUploaderEditorManager.RegisterEditor(editorRegistration);
-        }
-
-        [MenuItem("EAUploader/ViewpointPositionEditor")]
-        public static void Popup()
-        {
-            ViewpointPositionEditor editor = GetWindow<ViewpointPositionEditor>();
-            editor.titleContent = new GUIContent("Viewpoint Position Editor");
-            editor.minSize = new Vector2(800, 600);
-            editor.position = new Rect(100, 100, 1200, 600);
-        }
-
-        public void OnEnable()
-        {
-            _gameObject = PrefabManager.GetPrefab(EAUploaderCore.selectedPrefabPath);
-
-            if (_gameObject == null)
-            {
-                return;
-            }
-
-            _previewRenderer = new PreviewRenderer(_gameObject);
-        }
-
-        public void CreateGUI()
-        {
-            if (_gameObject == null)
-            {
-                Close();
-                return;
-            }
-
-            _editorUI = new ViewpointPositionEditorUI(_previewRenderer);
-            rootVisualElement.Add(_editorUI.Root);
-
-            // Localization file path
-            var localizationFolderPath = "Packages/tech.uslog.eauploader/Editor/Resources/UI/TabContents/Setup/Editor/ViewpointPositionEditor/Localization";
-            LanguageUtility.LocalizationFromJsonFile(rootVisualElement, localizationFolderPath);
-        }
-
-        private void OnDisable()
-        {
-            _previewRenderer?.Dispose();
-            _editorUI?.Dispose();
-        }
-
-        private static bool CheckAvatarHasVRCAvatarDescriptor(string prefabPath)
-        {
-            GameObject gameObject = PrefabManager.GetPrefab(prefabPath);
-            return Utility.CheckAvatarHasVRCAvatarDescriptor(gameObject);
-        }
-    }
-}
-```
-
 ### Making EAUploader Recognize the Extension
 
-To make EAUploader recognize the extension, you need to write the following code.
+To make EAUploader recognize the extension, you need to write code like the following.
+The following code is an excerpt of the registration part of ViewpointPositionEditor.cs.
 *The role of LanguageUtility.T7eFromJsonFile is explained in detail later.*
 
 ```csharp
@@ -171,6 +77,11 @@ To make EAUploader recognize the extension, you need to write the following code
             EAUploaderEditorManager.RegisterEditor(editorRegistration);
         }
 
+        private static bool CheckAvatarHasVRCAvatarDescriptor(string prefabPath)
+        {
+            GameObject gameObject = PrefabManager.GetPrefab(prefabPath);
+            return Utility.CheckAvatarHasVRCAvatarDescriptor(gameObject);
+        }
 ```
 
 1. Add the EAUPlugin attribute to any static method.
@@ -193,12 +104,14 @@ To make EAUploader recognize the extension, you need to write the following code
 
 :::caution[About the EAUPlugin attribute]
 Use `EAUploader.EAUPluginAttribute` in the `EAUploader` namespace for the `EAUPlugin` attribute.
-As of v1.4.6, methods with `EAUploader.Editor.Plugin.API.PluginAPI.EAUPluginAttribute` from the public API are not called when EAUploader starts.
+As of v1.6.2, methods with `EAUploader.Editor.Plugin.API.PluginAPI.EAUPluginAttribute` from the public API are not called when EAUploader starts.
 You can also use `PluginAPI.RegisterEditor` instead of `EAUploaderEditorManager.RegisterEditor` to register the editor registration information.
 :::
 
 :::note
-Give `EditorName` a name that does not overlap with other extensions. EAUploader manages the open/closed state of ▼ in the list based on `EditorName`, so if there are extensions with the same name, the display will not toggle correctly.
+`EditorName`, `Description`, and `RequirementDescription` are translated with EAUploader's own translation files when the list is shown. Strings not in EAUploader's translation files are shown as is, so translate your extension's own strings with `LanguageUtility.T7eFromJsonFile` (described later) before registering them.
+
+Also, give `EditorName` a name that does not overlap with other extensions. EAUploader manages the open/closed state of ▼ in the list based on `EditorName`, so if there are extensions with the same name, the display will not toggle correctly.
 :::
 
 ### Implementing the Method Called from EAUploader
@@ -207,32 +120,32 @@ Add the MenuItem attribute to any method as shown below.
 This is the method called when the user presses the extension editor's button.
 
 ```csharp
-        [MenuItem("EAUploader/ViewpointPositionEditor")]
-        public static void Popup()
+        [MenuItem("Tools/My Avatar Tool")]
+        public static void Open()
         {
-            ViewpointPositionEditor editor = GetWindow<ViewpointPositionEditor>();
-            editor.titleContent = new GUIContent("Viewpoint Position Editor");
-            editor.minSize = new Vector2(800, 600);
-            editor.position = new Rect(100, 100, 1200, 600);
+            var window = EditorWindow.GetWindow<MyAvatarTool>();
+            window.titleContent = new GUIContent("My Avatar Tool");
+            window.minSize = new Vector2(800, 600);
         }
-
 ```
 
 With the steps above, the extension's button will be shown in EAUploader's screen.
 
-### Getting the Selected Avatar
+### Getting the Selected Item
 
-The path of the avatar (prefab) selected by the user in EAUploader can be obtained with `EAUploaderCore.selectedPrefabPath` (`CoreAPI.SelectedPrefabPath` in the public API).
+The path of the item (prefab) selected by the user in EAUploader can be obtained with `EAUploaderCore.selectedPrefabPath` (`CoreAPI.SelectedPrefabPath` in the public API).
 The prefab's `GameObject` can be obtained with `PrefabManager.GetPrefab` (`PrefabAPI.GetPrefab` in the public API).
 
-```csharp
-        public void OnEnable()
-        {
-            _gameObject = PrefabManager.GetPrefab(EAUploaderCore.selectedPrefabPath);
-        }
-```
+To detect when the selected item changes, use the `CoreAPI.SelectedPrefabPathChanged` event.
 
-To detect when the selected avatar changes, use the `CoreAPI.SelectedPrefabPathChanged` event.
+### Modifying the Selected Item
+
+The path of the selected item is the path of a Prefab Variant managed by EAUploader (`Assets/EAUploader/Prefabs/<item name>/<item name>.prefab`).
+EAUploader is designed never to modify the original Prefab imported by the user, and to modify only this Prefab Variant. Please make your extension modify only the Prefab at the selected path as well.
+
+* To modify the Prefab, we recommend opening it with `PrefabUtility.LoadPrefabContents` and saving it to the same path with `PrefabUtility.SaveAsPrefabAsset`. Changes are saved as overrides on the Prefab Variant.
+* When you save, EAUploader detects the import and automatically updates the list information and the preview image.
+* We recommend saving assets created by your extension, such as textures and meshes, inside the item's folder (`Assets/EAUploader/Prefabs/<item name>/`). When the item is deleted, assets used only by that item are deleted together.
 
 ### Implement CreateGUI, OnEnable, and Other Methods as Needed
 
@@ -253,10 +166,10 @@ Configure the created .asmdef file as follows.
 4. Add Version Defines with the following values. Change the Define and Expression values as appropriate.
    * Resource: tech.uslog.eauploader
    * Define: EAUploader
-   * Expression: 1.4.0
+   * Expression: 1.6.0
 
 Step 4 enables conditional compilation.
-For example, writing the following enables the code only when EAUploader version 1.4.0 or later is present.
+For example, writing the following enables the code only when EAUploader version 1.6.0 or later is present.
 
 ```csharp
 #if EAUploader
@@ -268,7 +181,7 @@ If you want the extension to work in projects without EAUploader, wrap the EAUpl
 
 ## Minimal Sample
 * * *
-A minimal extension sample that works as is. It shows the name and viewpoint height of the selected avatar.
+A minimal extension sample that works as is. It shows the name and viewpoint height of the selected item.
 
 ```csharp
 using UnityEditor;
@@ -337,8 +250,12 @@ Configure the assembly as described in "3. Create an Assembly".
 * * *
 Export the folder you created (source code and .asmdef file) as a `.unitypackage`, or distribute it as a VPM package.
 
-* For a `.unitypackage`, users can import it with the "Import extentions" button in the Setup tab.
+* For a `.unitypackage`, users can import it from the Unity menu "Assets" → "Import Package" → "Custom Package...".
 * For a VPM package, you can declare the dependency on EAUploader by specifying `tech.uslog.eauploader` in `vpmDependencies` of `package.json`.
+
+:::note
+Since v1.6.0, the "Import extentions" and "Find extentions" buttons on the Edit screen are temporarily hidden.
+:::
 
 Please let us know about extensions you have distributed on [Project EAUploader's Discord server](https://discord.gg/yYFru7brra).
 
@@ -392,7 +309,7 @@ Each JSON file has content like the following.
 ```
 
 :::caution
-Prepare JSON files for all languages EAUploader supports (`ja` and `ko` as of v1.4.6).
+Prepare JSON files for all languages EAUploader supports (`ja` and `ko` as of v1.6.2).
 `LanguageUtility.LocalizationFromJsonFile` throws an error if the JSON file for any language does not exist. For languages you cannot translate, place an empty file such as `"items": []`. (The English strings will be shown as is.)
 :::
 
@@ -409,25 +326,16 @@ This method replaces the Text values of all components derived from TextElement 
 
 Note that the explanation above is only an image; the strings in the UXML file are not actually rewritten. LanguageUtility.LocalizationFromJsonFile only replaces the values in rootVisualElement.
 
-In the sample code, this is done in the CreateGUI method.
-
 ```csharp
         public void CreateGUI()
         {
-            if (_gameObject == null)
-            {
-                Close();
-                return;
-            }
-
-            _editorUI = new ViewpointPositionEditorUI(_previewRenderer);
-            rootVisualElement.Add(_editorUI.Root);
+            var visualTree = Resources.Load<VisualTreeAsset>("MyAvatarTool");
+            visualTree.CloneTree(rootVisualElement);
 
             // Localization file path
-            var localizationFolderPath = "Packages/tech.uslog.eauploader/Editor/Resources/UI/TabContents/Setup/Editor/ViewpointPositionEditor/Localization";
+            var localizationFolderPath = "Assets/MyAvatarTool/Localization";
             LanguageUtility.LocalizationFromJsonFile(rootVisualElement, localizationFolderPath);
         }
-
 ```
 
 In the public API, `LanguageAPI.LocalizeFromJsonFile` does the same.
@@ -453,7 +361,7 @@ It returns the string for the currently set language. If no corresponding string
 In the public API, `LanguageAPI.GetLocalizedTextFromJsonFile` does the same.
 
 :::note
-Values such as `EditorName` shown in the edit tool list are registered when EAUploader starts. Therefore, if you change the language, they are shown in the previous language until EAUploader restarts.
+Editor registration information such as `EditorName` is registered when EAUploader starts. Therefore, strings translated with `T7eFromJsonFile` are shown in the previous language until EAUploader restarts, even if you change the language.
 :::
 
 ### Getting the Current Language

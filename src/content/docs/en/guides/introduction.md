@@ -6,24 +6,24 @@ description: 'About the EAUploader documentation'
 ## About This Documentation
 This documentation explains how to use EAUploader and how to create tools that work with it.
 
-This documentation is based on EAUploader v1.4.6.
+This documentation is based on EAUploader v1.6.2.
 
 ## What is EAUploader?
 EAUploader (Easy Avatar Uploader for VRChat) is a tool that simplifies Unity so that you can upload avatars to VRChat "easily".
-It runs as a Unity editor extension, and lets you do everything from importing an avatar to uploading it in a single window.
+It runs as a Unity editor extension, and lets you do everything from managing avatars and outfits to simple modifications and uploading in a single window.
 
 ### What You Can Do with This Tool
-* **Import avatars** ― Import avatars distributed as `.prefab` or `.unitypackage` with a single button.
-* **Manage avatars** ― Manage the avatars in your project in a list with preview images.
+* **Manage avatars and outfits** ― Import avatars, outfits, and accessories distributed as `.prefab` or `.unitypackage`, and see them as cards with preview images. You can organize them with tags, memos, and pins.
+* **Management that does not break the original data** ― Imported avatars are never modified directly. EAUploader creates its own copy (a Prefab Variant) and manages that instead.
 * **Check shaders** ― Get notified when shaders required by an avatar are missing.
+* **Simple modifications** ― With the built-in edit tools, you can set the viewpoint position, adjust shape keys (body shape and facial expressions), recolor textures, and dress the avatar with compatible outfits.
 * **Convert VRM avatars** ― Convert VRM (0.x) avatars for VRChat by installing the separate tool "VRM Converter for VRChat".
-* **Adjust the viewpoint position** ― Set the viewpoint position with the built-in edit tool "Viewpoint Position Editor".
 * **Optimize avatars** ― Automatically optimize avatars on upload by installing the separate tool "AvatarOptimizer".
-* **Upload avatars** ― Set the name, visibility, and thumbnail, and upload to VRChat. Switching between PC and Android (Quest) builds is also supported.
+* **Upload avatars** ― Set the name, visibility, and thumbnail, and upload to VRChat. In addition to PC, you can upload for Quest (Android) and iOS at the same time.
 
 ### What You Cannot Do with This Tool
-EAUploader only supports avatars that have already been built and completed for VRChat, or VRM avatars.
-Avatar modifications such as changing outfits, adding accessories, or changing facial expressions are not supported. To modify avatars, use the regular Unity editor, or install an extension that supports EAUploader.
+EAUploader is designed for avatars that have already been built and completed for VRChat, or VRM avatars.
+The built-in edit tools allow simple modifications such as dressing an avatar with outfits made for it (compatible outfits) and adjusting colors and body shape, but not full modifications such as wearing non-compatible outfits or adding gimmicks. For those, use the regular Unity editor, or install an extension that supports EAUploader.
 
 ## Requirements
 | Item | Details |
@@ -37,6 +37,7 @@ Avatar modifications such as changing outfits, adding accessories, or changing f
 | ---- | ---- |
 | [VRM Converter for VRChat](https://booth.pm/ja/items/1025226) | Importing and converting VRM (0.x) avatars |
 | [AAO: Avatar Optimizer](https://booth.pm/ja/items/4885109) | Automatic optimization on upload |
+| [Modular Avatar](https://modular-avatar.nadena.dev/) | Setting up outfits in Dress Up (Compatible Outfits) without changing the avatar's bone structure |
 
 ## Structure of This Documentation
 | Category | Contents |

@@ -38,8 +38,9 @@ public static string GetVersion(bool noText = false);
 public static void Reload();
 ```
 
-* `SelectedPrefabPath` is `null` when no avatar is selected. Setting a value raises `SelectedPrefabPathChanged`.
-* `GetVersion` returns only the version number (e.g., `1.4.6`) when `noText` is `true`, and a string including descriptive text such as "Version: 1.4.6" when `false`.
+* `SelectedPrefabPath` is `null` when no item is selected. The selected item is the path of a Prefab Variant managed by EAUploader (under `Assets/EAUploader/Prefabs/`). Setting a value raises `SelectedPrefabPathChanged`.
+* Whether Modular Avatar is installed is not part of the public API (it is checked internally with `EAUploaderCore.HasMA`).
+* `GetVersion` returns only the version number (e.g., `1.6.2`) when `noText` is `true`, and a string including descriptive text such as "Version: 1.6.2" when `false`.
 * `Reload` does the same as "EAUploader" → "Reload" in the menu. The selected prefab is cleared.
 
 # LanguageAPI
@@ -100,10 +101,12 @@ public static Task UpdateVRCAvatar(string prefabPath, string contentName, string
 
 * `ProgressEventArgs` of `UploadProgressChanged` has `Status` (description of the progress) and `Percentage` (progress from 0 to 1).
 * `GetVRCAvatar` returns `null` if you are not logged in to VRChat, if the prefab has no `PipelineManager` or Blueprint ID, or if the avatar is not found on VRChat.
-* `UploadAvatarAsync` uploads a new avatar if it does not exist on VRChat, and updates the avatar if it does.
+* `UploadAvatarAsync` uploads a new avatar if it does not exist on VRChat, and updates the avatar if it does. Uploads from the public API are for Windows (PC) only.
+* The upload is done by temporarily creating a copy of the Prefab in the scene. A Blueprint ID is assigned before uploading to Prefabs that do not have one.
+* Only one build or upload can run at a time.
 * `UpdateVRCAvatar` updates information such as the name and description, and the thumbnail, without rebuilding the avatar.
 * You must be logged in to the VRChat SDK to use these methods.
 
-:::caution
-`BuildAndTestAsync` and `UploadAvatarAsync` remove components that cannot be used in VRChat from the prefab before building.
+:::note
+`BuildAndTestAsync` and `UploadAvatarAsync` build a copy of the Prefab, so the managed Prefab is not changed (except for assigning and writing back the Blueprint ID).
 :::

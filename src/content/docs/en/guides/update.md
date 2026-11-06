@@ -13,12 +13,16 @@ You can update EAUploader from VCC (or ALCOM).
 
 After updating, open the project in Unity.
 
+:::note
+If you updated from an older version, the first start asks whether to move your items to the new management method (Prefab Variants). See "[Importing and Managing Avatars](/en/guides/import/#how-eauploader-manages-items)" for details.
+:::
+
 :::caution
 Please back up your project before updating. See "[Guide for New Users](/en/guides/getting_started/#how-to-back-up)" for how to make a backup.
 :::
 
-You can check the version of EAUploader currently installed in "Settings" of the Import/Settings tab.
-Updates are announced on the [GitHub releases page](https://github.com/Project-EAUploader/EAUploader-for-VRChat/releases) and the official Discord server.
+You can check the version of EAUploader currently installed in "Settings" on the Avatar List.
+Updates are announced on the [GitHub releases page](https://github.com/eauploader/EAUploader-for-VRChat/releases) and the official Discord server.
 
 ## Removing EAUploader from a Project
 * * *
@@ -27,24 +31,31 @@ Press the ⊖ button of **Easy Avatar Uploader for VRChat** in VCC's Manage Pack
 Removing EAUploader does not delete data such as avatars or shaders. You can keep using the project as a regular Unity editor.
 
 ### Files Created by EAUploader
-EAUploader creates the following files and folders in the project. After removing EAUploader, you can delete them if you no longer need them.
+EAUploader creates the following files and folders in the project.
 
 | Location | Contents |
 | ---- | ---- |
-| `Assets/EAUploader/settings.json` | Settings such as the language |
-| `Assets/EAUploader/PrefabManager.json` | Manage Model information (pins, hidden items, etc.) |
-| `Assets/EAUploader/EditorsManage.json` | Information about registered edit tools |
+| `Assets/EAUploader/Prefabs/` | Items managed by EAUploader (managed copies) and textures and materials created by edit tools |
 | `Assets/EAUploader/PrefabPreviews/` | Preview images shown in the list |
+| `Assets/EAUploader/settings.json` | Settings such as the language |
+| `Assets/EAUploader/tags.json` | Tags and tag groups |
+| `Assets/EAUploader/EditorsManage.json` | Information about registered edit tools |
+| `Assets/EAUploader/PrefabManager.json` | A file kept for compatibility with older versions |
 | `EAUploaderLog/` (directly under the project folder) | Log files |
 | `Assets/VRM/` | Avatars imported from VRM (only if you used VRM) |
 
-:::caution
-`Assets/VRM/` contains the imported VRM avatars themselves. Do not delete it if you are using VRM avatars.
+:::danger
+`Assets/EAUploader/Prefabs/` contains the avatars you renamed in EAUploader or modified with edit tools. Do not delete it if you want to keep using these avatars after removing EAUploader.
+Also, `Assets/VRM/` contains the imported VRM avatars themselves. Do not delete it if you are using VRM avatars.
 :::
 
 ### If "Missing Script" Is Shown
-EAUploader adds a component called "EAUploaderMeta" to prefabs to manage avatars.
-After removing EAUploader, this component may be shown as "Missing Script". This component does not affect the avatar's appearance or behavior. If you do not need it, remove it from the Inspector.
+EAUploader adds a component called "EAUploaderMeta" to its managed copies to manage items. Outfits put on with Dress Up (Compatible Outfits) get a component called "EAUploaderOutfit".
+After removing EAUploader, these components may be shown as "Missing Script". These components are removed on upload and do not affect the avatar's appearance. If you do not need them, remove them from the Inspector.
+
+:::caution
+For outfits put on with Dress Up (Compatible Outfits) without Modular Avatar, EAUploader merges them into the avatar's bones at upload time. After removing EAUploader, this merge no longer happens, so the outfits will not be shown correctly.
+:::
 
 ## If Problems Occur
 * * *
