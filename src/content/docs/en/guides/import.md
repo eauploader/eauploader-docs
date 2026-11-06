@@ -1,138 +1,143 @@
 ---
 title: 'Importing and Managing Avatars'
-description: 'How to use the Import/Settings tab'
+description: 'How to use the Avatar List screen'
 ---
 
-In the **Import/Settings** tab, you import avatars and shaders, manage the models in your project, and change tool settings.
+The **Avatar List** is the first screen shown when you open EAUploader. Here you import avatars, outfits, and accessories, manage them in a list, and change tool settings.
 
-The screen is divided into three parts from left to right: "Import / Settings", "Manage Model", and "EA Library".
+## How EAUploader Manages Items
+* * *
+EAUploader **never modifies** the avatars and outfits (Prefabs) you import.
+On import, it creates its own copy based on that Prefab (a Prefab Variant) in the following folder, and from then on only edits and uploads this copy.
 
-## Importing Avatars
+```
+Assets/EAUploader/Prefabs/<item name>/<item name>.prefab
+```
+
+So even if you rename an item or modify it with edit tools in EAUploader, the original data you got from the avatar's distributor is kept as is.
+
+:::note
+In projects that used an older version of EAUploader, the first start after updating shows "EAUploader now manages prefabs as variants in the following folder". Press <span style="color: #00b0f0">Migrate</span> to move the items that were in the list to the new management method. If you press <span style="color: #00b0f0">Later</span>, you will be asked again at the next start.
+:::
+
+## Importing Items
 * * *
 ### Supported File Formats
-The avatar file formats EAUploader can import are as follows.
-
 | Format | Description |
 | ---- | ---- |
-| `.prefab` | Prefab. A bundle of the avatar itself (the body, outfits, and other parts). In general, a prefab = the avatar itself. |
-| `.unitypackage` | Package. Avatars are often distributed with the avatar itself, shaders, outfits, and more bundled together. |
+| `.unitypackage` | Package. The avatar itself, shaders, outfits, and more are distributed bundled together. All Prefabs it contains are added to the list. |
+| `.prefab` | Prefab. You can select one inside this project's `Assets` folder. |
 | `.vrm` | VRM avatar (ver. 0.x only). Requires VRM Converter for VRChat. See "[Using VRM Avatars](/en/guides/vrm/)" for details. |
 
 :::caution
-EAUploader supports **avatars made for VRChat**. Please prepare an avatar that is sold or distributed for VRChat.
+EAUploader can upload **avatars made for VRChat**. Please prepare an avatar that is sold or distributed for VRChat.
 :::
 
-### Importing by Selecting a File
-Press the <span style="color: #00b0f0">Import</span> button under <span style="color: #00b0f0">Import Avatars</span> and select the downloaded avatar file (`.prefab` or `.unitypackage`).
-
-When you select a `.unitypackage`, Unity's import confirmation window is not shown, and all contents of the package are added to the project.
-
-### Importing a Whole Folder
-To import multiple avatars at once, press the <span style="color: #00b0f0">Import from folder</span> button and select a folder.
-
-All `.prefab` and `.unitypackage` files in the selected folder (including its subfolders) are imported. A list of files to be imported is shown first; check it and press <span style="color: #00b0f0">Import</span>.
-
-### Importing by Drag and Drop
-You can also import by dragging and dropping files from Explorer onto the "Manage Model" list.
-In addition to `.unitypackage` and `.prefab`, you can also drop `.vrm` files if VRM Converter for VRChat is installed.
-
-### What Happens After Importing
-When an avatar (prefab) is imported, EAUploader automatically does the following.
-
-* **Shader check** ― If shaders set on the avatar are not in the project, the "Shader Issues Found" message is shown. In that case, install the shaders by following "[Shader not found error](/en/faq/missing_shader/)".
-* **Preview image creation** ― Creates a preview image to show in the list.
-
-## Importing Shaders
-* * *
-With the <span style="color: #00b0f0">Import Shaders</span> button, you can import a `.unitypackage` file that contains shaders.
-
-Pressing the <span style="color: #00b0f0">Show existing shaders</span> button shows a list of shaders installed in the project.
-Some shaders not supported by VRChat are excluded from the list.
-
-:::tip
-Shaders are also distributed as `.unitypackage`, but we strongly recommend adding shaders that support VCC (or ALCOM) from VCC.
-Managing them in VCC lets you update them easily.
-:::
-
-## Manage Model
-* * *
-The "Manage Model" list in the center shows **all `.prefab` files** in the project's `Assets` folder. This means things other than avatars (outfits, accessories, and so on) may also appear.
-
-### Reading the List
-Each item shows a preview image, the prefab's name, and the last modified date.
-If there is a problem with an avatar, the following warnings are shown.
-
-| Warning | Meaning |
-| ---- | ---- |
-| Can't be uploaded | This is not an avatar for VRChat (it has no VRCAvatarDescriptor). Prefabs of outfits and accessories also show this. |
-| VRM Avatar needs to convert to VRChat Avatar | This is a VRM avatar. It needs to be converted before uploading. |
-| Cannot find the configured shader. | Shaders required by the avatar are not in the project. |
-
-Clicking a preview image shows it in a larger size. You can also recreate the preview image with <span style="color: #00b0f0">Regenerate Preview</span> in the window that opens.
-
-### Search, Sort, and Filter
-* **Search** ― Enter part of a name in the input field at the top and press <span style="color: #00b0f0">Search</span> to show only items whose names contain the text.
-* **Sort** ― Choose from "Last Modified Descending", "Last Modified Ascending", "Name Descending", and "Name Ascending".
-* **Filter** ― Choose from "Do not show hidden models", "Show hidden models", and "Show only hidden models".
-
-### Hiding Items from the List
-Items with warnings show a <span style="color: #00b0f0">Hide</span> button. Pressing it marks that `.prefab` as hidden, and it no longer appears in this list or in the lists of the Setup and Upload tabs.
-Use this feature if outfits or accessories you do not need appear in the list.
-
-You can see hidden items by changing the filter to "Show hidden models", and restore them with the <span style="color: #00b0f0">Show</span> button.
-
-:::note
-Hiding an item does not delete the prefab itself from the project.
-:::
-
-### Renaming, Copying, and Deleting
-The buttons on the right of each item let you do the following.
+### Adding from the Import Window
+Press the <span style="color: #00b0f0">Import</span> button at the top of the Avatar List to open the import window.
 
 | Button | Details |
 | ---- | ---- |
-| ✏ (pencil) | Renames the prefab. |
-| ⧉ (copy) | Duplicates the prefab. After duplicating, a window for entering a new name appears. Use this when you want to keep the avatar before modifying it, for example. |
-| 🗑 (trash) | Deletes the prefab. |
+| Import | Select and import a `.prefab` or `.unitypackage`. |
+| Import from folder | Imports all `.prefab` and `.unitypackage` files in the selected folder (including its subfolders). A list of the target files is shown before importing. |
+| Import VRM | Imports a `.vrm` file. Available only when VRM Converter for VRChat is installed. |
+| Import Shaders | Imports a `.unitypackage` that contains shaders. |
+| Show existing shaders | Shows a list of shaders installed in the project. Some shaders not supported by VRChat are excluded. |
 
-:::danger
-Deleted prefabs are also deleted from the Unity project. This cannot be undone, so please be careful.
+When you select a `.unitypackage`, Unity's import confirmation window is not shown, and all contents of the package are added to the project.
+
+:::note
+When selecting a `.prefab`, choose one inside this project's `Assets` folder. `.prefab` files outside the project or inside EAUploader's internal folder (`Assets/EAUploader`) cannot be selected. To bring in assets from another project, use a `.unitypackage`.
+Use this method also when you want to add an avatar that is already in the project to the list.
 :::
 
-## EA Library (In-Tool Guide)
+### Adding by Drag and Drop
+You can also import by dragging and dropping files from Explorer onto the Avatar List.
+In addition to `.unitypackage` and `.prefab`, you can also drop `.vrm` files if VRM Converter for VRChat is installed.
+
+### What Happens After Importing
+* **Shader check** ― If shaders set on the avatar are not in the project, the "Shader Issues Found" message is shown. In that case, install the shaders by following "[Shader not found error](/en/faq/missing_shader/)".
+* **Genre setting** ― Avatars for VRChat automatically get the genre "Avatar". When Prefabs other than avatars (outfits, accessories, etc.) are imported, the "Outfit Settings" window is shown. Choose a genre for each from "Cloth", "Accessory", and "Other", and press <span style="color: #00b0f0">Save</span>. Unchecked items are not set. You can change the genre later on the Edit screen.
+* **Preview image creation** ― Creates a preview image to show in the list.
+
+## The Item List
 * * *
-The "EA Library" on the right contains articles about how to use the tool, shaders, extensions, and uploading. If there is something you do not understand, look it up here.
+### Reading the Cards
+Items are shown as cards. A card shows the preview image, name, last modified date, and attached tags. Pinned and hidden items have a mark.
 
-* You can search articles with the input field at the top.
-* You can filter articles by tag with the dropdown.
-* Select an article to show its content. Use the back button to return to the list.
+Items that cannot be uploaded show the following.
 
-Pressing the `>` button at the top right of "Manage Model" closes the EA Library so that the model list is shown wider. Press it again to reopen. The open/closed state is saved.
+| Display | Meaning |
+| ---- | ---- |
+| Needs conversion | This is a VRM avatar. It needs to be converted to a VRChat avatar before uploading. |
+| Can't be uploaded | It is not an avatar for VRChat (no VRCAvatarDescriptor), or required shaders are not in the project. Outfits and accessories also show this. |
+
+### Card Operations
+* Click a card to open the item's **Edit screen**.
+* Hovering over a card shows <span style="color: #00b0f0">Edit</span>, <span style="color: #00b0f0">Upload</span> (only for items whose genre is "Avatar"), and <span style="color: #00b0f0">Delete</span> buttons.
+* Right-clicking a card shows the following menu.
+
+| Menu | Details |
+| ---- | ---- |
+| Pin / Unpin | Pinned items are shown at the top of the list regardless of the sort order. |
+| Hide / Show | Hidden items are normally no longer shown in the list. |
+| Show in Project | Shows the Prefab in Unity's Project window. |
+| Delete | Deletes the item. |
+
+### Search, Filter, and Sort
+| Feature | Details |
+| ---- | ---- |
+| Search | Typing in "Search by name or tag" shows only items whose name or tags contain the text. The list is filtered as you type. |
+| Category | Choose the genres to show from "Avatar", "Cloth", and "Items and Others". You can select multiple; when nothing is selected, "All" is shown. |
+| Sort | Choose from "Last Modified Descending", "Last Modified Ascending", "Name Descending", and "Name Ascending". Pinned items are always shown first. |
+| Filter by tag | Shows only items that have **all** of the selected tags. The button shows the number of selected tags. |
+| Show hidden items | When on, hidden items are also shown in the list. |
+| Card size | Change the size of the cards with the slider. The size is saved. |
+
+## Managing Tags
+* * *
+Tags let you freely categorize avatars and outfits (e.g., "Favorites", "Winter clothes", "Modified").
+Adding and removing tags on an item is done in "Item Info" on the Edit screen. ([Edit Screen](/en/guides/setup/#tags))
+
+Pressing the <span style="color: #00b0f0">Tag Settings</span> button lets you manage the tags of the whole project.
+
+* **Add tag** ― Enter a new tag name and add it. You can also choose a group when adding it.
+* **Add group** ― Creates a group for organizing tags. A tag can belong to only one group.
+* **Delete** ― Deleting a tag removes it from all items. Deleting a group keeps the tags in it.
+
+:::note
+Tag names and group names can be up to 32 characters. Upper and lower case are not distinguished; tags that differ only in case are treated as the same tag.
+:::
+
+## Deleting Items
+* * *
+You can delete an item from the card's <span style="color: #00b0f0">Delete</span> button, the right-click menu, or <span style="color: #00b0f0">Delete</span> on the Edit screen.
+
+When you choose to delete, a confirmation window opens and searches for related assets to delete together.
+In addition to EAUploader's managed copy, **the source Prefab you imported and materials and textures used only by that item are also deleted**. Assets used by other items or scenes are kept.
+Open "Deletion details" to see the list of files that will actually be deleted.
+
+:::danger
+Deleted items and assets are also deleted from the Unity project and cannot be restored.
+Check what will be deleted in the details before deleting.
+:::
 
 ## Settings
 * * *
-In "Settings" at the bottom left, you can change the following settings and perform the following operations.
+With the <span style="color: #00b0f0">Settings</span> button at the top of the Avatar List, you can change the following settings.
 
-### Language
-You can change EAUploader's display language to "English", "日本語", or "한국어".
-When you change the language, a confirmation message appears. Press <span style="color: #00b0f0">Yes</span> to reload the VRChat SDK and switch the display.
-
-### Theme
-You can choose EAUploader's color scheme from "Light" and "Dark".
-
-:::caution
-Themes are an experimental feature. Some parts may be hard to see.
-:::
-
-### Version
-Shows the version of EAUploader currently installed. Please include the version when contacting us.
-
-### Open log report
-Pressing the <span style="color: #00b0f0">Open log report</span> button opens the folder where EAUploader's log files are saved (`EAUploaderLog` directly under the project folder).
-When reporting a bug, attaching the log file helps us investigate the cause.
+| Item | Details |
+| ---- | ---- |
+| Language | Choose EAUploader's display language from "English", "日本語", and "한국어". When you change it, a confirmation message appears. Press <span style="color: #00b0f0">Yes</span> to reload the VRChat SDK and switch the display. |
+| Theme | Choose the color scheme from "Light", "Dark", and "Pastel". Themes are an experimental feature. |
+| Show error report window | When off, the error report is no longer shown automatically when an error occurs. |
+| Version | The version of EAUploader installed. Please include the version when contacting us. |
+| Open log report | Opens the folder where EAUploader's log files are saved (`EAUploaderLog` directly under the project folder). When reporting a bug, attaching the log file helps us investigate the cause. |
 
 :::note
-The "Send feedback" feature and automatic log sending from earlier versions are currently suspended. Please send feedback and bug reports via [Discord](https://discord.gg/yYFru7brra) or [GitHub](https://github.com/Project-EAUploader/EAUploader-for-VRChat/issues).
+The "Send feedback" feature and automatic log sending from earlier versions are currently suspended. Please send feedback and bug reports via [Discord](https://discord.gg/yYFru7brra) or [GitHub](https://github.com/eauploader/EAUploader-for-VRChat/issues).
 :::
 
-### Exit Unity
-Pressing the <span style="color: #00b0f0">Exit Unity</span> button exits Unity after a confirmation.
+## Exit Unity
+* * *
+Pressing the <span style="color: #00b0f0">Exit Unity</span> button at the top of the Avatar List exits Unity after a confirmation.

@@ -1,0 +1,145 @@
+---
+title: 'EAUploader.Editor.Prefab.API'
+description: 'EAUploader.Editor.Prefab.API namespace'
+sidebar:
+  order: 3
+---
+
+与预制体的操作和信息获取相关的公开API。
+定义在`Editor/Public EAUploader API/`中的`EAUploader.Editor.Prefab.API.cs`、`EAUploader.Editor.PrefabPreview.API.cs`、`EAUploader.Editor.Shader.API.cs`、`EAUploader.Editor.PrefabUtility.API.cs`、`EAUploader.Editor.VRM.API.cs`中（每个文件一个类）。
+
+```csharp
+using EAUploader.Editor.Prefab.API;
+```
+
+| 类           | 说明 |
+| --------------- | ----------- |
+| PrefabAPI | 提供预制体的操作和信息 |
+| PrefabPreviewAPI | 提供预制体的预览图 |
+| ShaderAPI | 提供着色器检查 |
+| PrefabUtilityAPI | 提供Avatar的信息 |
+| VRMAPI | 提供VRM导入（仅在安装了VRM Converter for VRChat时） |
+
+:::note
+使用返回`VRCAvatarDescriptor`或`PipelineManager`的方法时，请在扩展功能的程序集中添加对VRChat SDK程序集的引用。
+:::
+
+# PrefabAPI
+* * *
+| 方法 | 类型 | 说明 |
+| ------ | ---- | ----------- |
+| UpdatePrefabInfo | Void | 重新初始化管理用预制体（管理用文件夹、迁移、缺少的预览图） |
+| ImportPrefab | Void | 将指定路径的预制体纳入EAUploader（创建或更新管理用Prefab Variant） |
+| GetPrefab | GameObject | 获取指定路径的预制体 |
+| ShowDeletePrefabDialog | Bool | 显示预制体的删除确认 |
+| DeletePrefabPreview | Void | 删除指定路径预制体的预览图 |
+| PinPrefab | Void | 切换指定路径预制体的置顶状态 |
+| GetAvatarDescriptor | VRCAvatarDescriptor | 获取指定路径预制体的VRCAvatarDescriptor |
+| IsPinned | Bool | 检查指定路径的预制体是否已置顶 |
+| SavePrefab | Void | 保存预制体 |
+
+```csharp
+public static void UpdatePrefabInfo();
+public static void ImportPrefab(string prefabPath);
+public static GameObject GetPrefab(string prefabPath);
+public static bool ShowDeletePrefabDialog(string prefabPath, Action<bool> completed);
+[Obsolete] public static bool ShowDeletePrefabDialog(string prefabPath);
+public static void DeletePrefabPreview(string prefabPath);
+public static void PinPrefab(string prefabPath);
+public static VRCAvatarDescriptor GetAvatarDescriptor(string prefabPath);
+public static bool IsPinned(string prefabPath);
+public static void SavePrefab(GameObject prefab, string path);
+```
+
+* 找不到预制体时，`GetPrefab`和`GetAvatarDescriptor`返回`null`。
+* 对于未管理的预制体，`ImportPrefab`会创建管理用Prefab Variant（`Assets/EAUploader/Prefabs/<物品名称>/`）；对于已管理的预制体，则更新其信息。原始预制体不会被更改。对于`Assets/`外、`Assets/EAUploader/`内或已存在Variant的预制体，不会创建Variant。
+* `ShowDeletePrefabDialog(path, completed)`会在EAUploader窗口内打开删除确认模态窗口，打开成功时返回`true`。删除完成时调用`completed(true)`，取消时调用`completed(false)`。除预制体外，原始预制体以及仅被该物品使用的材质和纹理也会被一并删除。
+* 单参数的`ShowDeletePrefabDialog(path)`为`[Obsolete]`。为了兼容，它会显示Unity标准的确认对话框，删除完成时返回`true`。
+* 预制体未置顶时，`PinPrefab`会将其置顶；已置顶时则取消置顶。
+* `SavePrefab`会将`GameObject`作为预制体保存到指定路径，并执行`ImportPrefab`。
+
+# PrefabPreviewAPI
+* * *
+| 方法 | 类型 | 说明 |
+| ------ | ---- | ----------- |
+| GeneratePreview | Texture2D | 生成预制体的预览图 |
+| GenerateAndSaveAllPrefabPreviews | Void | 为所有没有预览图的预制体生成并保存预览图 |
+| SavePrefabPreview | Void | 保存预制体的预览图 |
+| LoadTextureFromFile | Texture2D | 从文件加载纹理 |
+| SaveTextureToFile | Void | 将纹理保存为PNG文件 |
+| GetPreviewImagePath | String | 获取预制体预览图的路径 |
+| GetPrefabPreview | Texture2D | 获取预制体的预览图 |
+
+```csharp
+public static Texture2D GeneratePreview(GameObject prefab);
+public static void GenerateAndSaveAllPrefabPreviews();
+public static void SavePrefabPreview(string prefabPath, Texture2D preview);
+public static Texture2D LoadTextureFromFile(string filePath);
+public static void SaveTextureToFile(Texture2D texture, string filePath);
+public static string GetPreviewImagePath(string prefabPath);
+public static Texture2D GetPrefabPreview(string prefabPath);
+```
+
+* 预览图保存在`Assets/EAUploader/PrefabPreviews/{Prefab的GUID}.png`中。改名后预览图也会保留。
+* `GeneratePreview`生成1200×900的图片。
+* 不存在预览图时，`GetPrefabPreview`返回`null`。
+
+# ShaderAPI
+* * *
+| 方法 | 类型 | 说明 |
+| ------ | ---- | ----------- |
+| CheckShaders | Void | 检查Assets中所有预制体的着色器 |
+| GetExistingShaders | List | 获取项目中已安装着色器的分组名称列表 |
+| CheckShadersInPrefabs | Void | 检查指定预制体的着色器 |
+| CheckAvatarHasShader | Bool | 检查Avatar所需的着色器是否全部存在 |
+
+```csharp
+public static void CheckShaders();
+public static List<string> GetExistingShaders();
+public static void CheckShadersInPrefabs(string prefabPath);
+public static bool CheckAvatarHasShader(GameObject avatar);
+```
+
+* 存在缺少着色器的预制体时，`CheckShaders`和`CheckShadersInPrefabs`会显示对话框。
+* 没有缺少的着色器时，`CheckAvatarHasShader`返回`true`。不会显示对话框。
+
+# PrefabUtilityAPI
+* * *
+| 方法 | 类型 | 说明 |
+| ------ | ---- | ----------- |
+| GetAvatarHeight | Float | 获取Avatar的高度（视点高度） |
+| CheckAvatarHasVRCAvatarDescriptor | Bool | 检查Avatar是否拥有VRCAvatarDescriptor |
+| CheckAvatarIsVRM | Bool | 检查Avatar是否为VRM |
+| CheckAvatarHasTandO | Bool | 检查Avatar是否拥有AvatarOptimizer的TraceAndOptimize |
+| GetAvatarDescriptor | VRCAvatarDescriptor | 获取Avatar的VRCAvatarDescriptor |
+| GetPipelineManager | PipelineManager | 获取Avatar的PipelineManager |
+
+```csharp
+public static float GetAvatarHeight(GameObject avatar);
+public static bool CheckAvatarHasVRCAvatarDescriptor(GameObject avatar);
+public static bool CheckAvatarIsVRM(GameObject avatar);
+public static bool CheckAvatarHasTandO(GameObject avatar);
+public static VRCAvatarDescriptor GetAvatarDescriptor(GameObject avatar);
+public static VRC.Core.PipelineManager GetPipelineManager(GameObject avatar);
+```
+
+* `GetAvatarHeight`返回VRCAvatarDescriptor的`ViewPosition`的Y坐标。没有VRCAvatarDescriptor时返回`0`。
+* `avatar`为`null`时，`CheckAvatarHasVRCAvatarDescriptor`返回`false`。
+* 未安装VRM Converter for VRChat时，`CheckAvatarIsVRM`始终返回`false`。
+* 未安装AvatarOptimizer时，`CheckAvatarHasTandO`始终返回`false`。
+
+# VRMAPI
+* * *
+仅在安装了VRM Converter for VRChat时（定义了`HAS_VRM`时）可用。
+
+| 方法 | 类型 | 说明 |
+| ------ | ---- | ----------- |
+| ImportVRM | Void | 导入VRM文件并显示转换窗口 |
+
+```csharp
+public static void ImportVRM(string path = null);
+```
+
+* 省略`path`时会显示文件选择对话框。
+* 无法指定项目`Assets`中的文件。
+* 导入的VRM会保存到`Assets/VRM/{文件名}.prefab`。

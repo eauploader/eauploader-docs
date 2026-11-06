@@ -1,0 +1,112 @@
+---
+title: 'EAUploader.Editor.API'
+description: 'EAUploader.Editor.API namespace'
+sidebar:
+  order: 1
+---
+
+EAUploader 전체, 언어, 업로드에 관한 공개 API입니다.
+`Editor/Public EAUploader API/EAUploader.Editor.API.cs`에 정의되어 있습니다.
+
+```csharp
+using EAUploader.Editor.API;
+```
+
+| Class           | Description |
+| --------------- | ----------- |
+| CoreAPI | EAUploader 전체에 관한 공개 API를 제공하는 클래스 |
+| LanguageAPI | 언어에 관한 공개 API를 제공하는 클래스 |
+| UploadAPI | 업로드에 관한 공개 API를 제공하는 클래스 |
+
+# CoreAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| SelectedPrefabPath | String | 현재 선택한 프리팹의 경로를 가져오거나 설정 |
+| SelectedPrefabPathChanged | Event | 선택한 프리팹의 경로가 바뀌었을 때 발생하는 이벤트 |
+| HasVRM | Bool | EAUploader에서 VRM을 사용할 수 있는지 나타내는 값을 가져옴 |
+| HasAvatarOptimizer | Bool | Avatar Optimizer 패키지를 사용할 수 있는지 나타내는 값을 가져옴 |
+| GetVersion | String | EAUploader의 현재 버전을 가져옴 |
+| Reload | Void | EAUploader를 다시 불러옴(초기화) |
+
+```csharp
+public static string SelectedPrefabPath { get; set; }
+public static event Action<string> SelectedPrefabPathChanged;
+public static bool HasVRM { get; }
+public static bool HasAvatarOptimizer { get; }
+public static string GetVersion(bool noText = false);
+public static void Reload();
+```
+
+* `SelectedPrefabPath`는 아이템을 선택하지 않았으면 `null`입니다. 선택한 아이템은 EAUploader가 관리하는 Prefab Variant(`Assets/EAUploader/Prefabs/` 아래)의 경로입니다. 값을 설정하면 `SelectedPrefabPathChanged`가 발생합니다.
+* Modular Avatar 설치 여부는 공개 API에 포함되어 있지 않습니다(내부의 `EAUploaderCore.HasMA`로 판정합니다).
+* `GetVersion`은 `noText`가 `true`이면 버전 번호만(예: `1.6.2`), `false`이면 '버전: 1.6.2'처럼 설명 텍스트를 포함한 문자열을 반환합니다.
+* `Reload`는 메뉴의 'EAUploader' → 'Reload'와 같은 처리를 합니다. 선택한 프리팹은 해제됩니다.
+
+# LanguageAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| GetCurrentLanguage | String | 현재 언어 코드를 가져옴 |
+| Localize | Void | 지정한 VisualElement와 자식 요소의 텍스트를 현지화 |
+| LocalizeFromJsonFile | Void | 지정한 JSON 파일을 사용해 지정한 VisualElement와 자식 요소의 텍스트를 현지화 |
+| GetLocalizedTextFromJsonFile | String | 지정한 키에 해당하는 현지화된 텍스트를 지정한 JSON 파일에서 가져옴 |
+| ChangeLanguage | Void | 애플리케이션 언어를 변경 |
+| GetAvailableLanguages | List | 사용할 수 있는 언어 목록을 가져옴 |
+
+```csharp
+public static string GetCurrentLanguage();
+public static void Localize(VisualElement root);
+public static void LocalizeFromJsonFile(VisualElement root, string localizationFolderPath);
+public static string GetLocalizedTextFromJsonFile(string key, string localizationFolderPath);
+public static void ChangeLanguage(string language);
+public static List<LanguageInfo> GetAvailableLanguages();
+```
+
+* 언어 코드는 `en`, `ja`, `ko`입니다.
+* `Localize`는 EAUploader 본체의 번역 파일로 현지화합니다. 확장 기능 고유의 문자열을 현지화하려면 `LocalizeFromJsonFile`을 사용하세요.
+* `LocalizeFromJsonFile`, `GetLocalizedTextFromJsonFile`에서 사용하는 JSON 파일 형식은 '[빠른 시작 가이드](/ko/for_tooldev/extension/#작성할-json-파일-형식)'를 참조하세요.
+* `GetLocalizedTextFromJsonFile`은 해당하는 텍스트를 찾지 못하면 키를 그대로 반환합니다.
+* `ChangeLanguage`는 설정 파일의 언어를 바꿉니다. 표시를 바꾸려면 EAUploader를 다시 시작해야 합니다.
+* `LanguageInfo`는 `name`(언어 코드)과 `display`(표시 이름)를 가집니다.
+
+# UploadAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| OnUploadComplete | Event | 업로드가 완료되었을 때 발생하는 이벤트 |
+| UploadProgressChanged | Event | 업로드 진행 상황이 바뀌었을 때 발생하는 이벤트 |
+| BuildAndTestAsync | Task | 지정한 프리팹을 빌드하여 테스트하는 비동기 작업을 실행 |
+| GetVRCAvatar | Task | 지정한 프리팹의 VRCAvatar 정보를 가져옴 |
+| UploadAvatarAsync | Task | 지정한 프리팹을 아바타로 업로드하는 비동기 작업을 실행 |
+| UpdateVRCAvatar | Task | 지정한 프리팹의 VRCAvatar 정보를 업데이트하는 비동기 작업을 실행 |
+
+```csharp
+public static event EventHandler OnUploadComplete;
+public static event EventHandler<AvatarUploader.ProgressEventArgs> UploadProgressChanged;
+public static Task BuildAndTestAsync(string prefabPath);
+public static Task<VRCAvatar?> GetVRCAvatar(string prefabPath);
+public static Task UploadAvatarAsync(string prefabPath, string contentName, string contentDescription, string releaseStatus, List<string> tags, string thumbnailPath);
+public static Task UpdateVRCAvatar(string prefabPath, string contentName, string contentDescription, string releaseStatus, List<string> tags, string thumbnailPath);
+```
+
+| 인수 | 내용 |
+| ---- | ---- |
+| `prefabPath` | 프리팹 경로 |
+| `contentName` | 아바타 이름 |
+| `contentDescription` | 아바타 설명 |
+| `releaseStatus` | 공개 상태(`private` / `public`) |
+| `tags` | 태그(`content_sex`, `content_adult`, `content_violence`, `content_gore`, `content_horror` 등) |
+| `thumbnailPath` | 썸네일 이미지 경로 |
+
+* `UploadProgressChanged`의 `ProgressEventArgs`는 `Status`(진행 상황 설명)와 `Percentage`(0~1의 진행률)를 가집니다.
+* `GetVRCAvatar`는 VRChat에 로그인하지 않았거나, 프리팹에 `PipelineManager` 또는 Blueprint ID가 없거나, VRChat에서 아바타를 찾지 못하면 `null`을 반환합니다.
+* `UploadAvatarAsync`는 VRChat에 아바타가 없으면 새로 업로드하고, 있으면 아바타를 업데이트합니다. 공개 API에서의 업로드는 Windows(PC)용만 지원합니다.
+* 업로드는 Prefab의 복사본을 씬에 임시로 만들어 진행합니다. Blueprint ID가 없는 Prefab에는 업로드 전에 Blueprint ID가 할당됩니다.
+* 빌드와 업로드는 동시에 하나만 실행할 수 있습니다.
+* `UpdateVRCAvatar`는 아바타를 다시 빌드하지 않고 이름, 설명 등의 정보와 썸네일을 업데이트합니다.
+* 이 메서드들을 사용하려면 VRChat SDK에 로그인되어 있어야 합니다.
+
+:::note
+`BuildAndTestAsync`, `UploadAvatarAsync`는 Prefab의 복사본으로 빌드하므로 관리용 Prefab은 변경되지 않습니다(Blueprint ID 할당과 다시 쓰기 제외).
+:::

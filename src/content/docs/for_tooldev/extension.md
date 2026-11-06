@@ -6,19 +6,23 @@ description: 'EAUploaderに対応した拡張機能を制作する方法'
 # EAUploader拡張機能開発クイックスタートガイダンス
 
 本文書では、EAUploaderの拡張機能を開発する方法を解説します。
-拡張機能は、EAUploaderの「セットアップ」タブの「編集ツール」に追加され、ユーザーが選択したアバターに対して任意の処理を行うことができます。
+拡張機能は、EAUploaderの編集画面の「編集ツール」に追加され、ユーザーが選択したアイテムに対して任意の処理を行うことができます。
 
-実装の詳細については、EAUploaderにデフォルトで搭載されている拡張機能である「ビューポイント位置エディタ」をご覧ください。
+登録の実装例として、EAUploaderにデフォルトで搭載されている拡張機能である「ビューポイント位置エディタ」もご覧ください。
 `Packages/tech.uslog.eauploader/Editor/Resources/UI/TabContents/Setup/Editor/ViewpointPositionEditor`配下に実装のコードが存在します。
 
-本ドキュメントは、EAUploader v1.4.6の内容に準拠しています。
+本ドキュメントは、EAUploader v1.6.2の内容に準拠しています。
 
 ## 拡張機能の仕組み
 * * *
 1. EAUploaderは起動時（Unityの起動時やスクリプトの再コンパイル後）に、`EAUPlugin`属性が付与されたstaticメソッドを探して呼び出します。
 2. 拡張機能は、そのメソッドの中で`EAUploaderEditorManager.RegisterEditor`を呼び出して、自身の情報（エディタ登録情報）を登録します。
-3. EAUploaderは、登録された拡張機能をセットアップタブの「編集ツール」に一覧で表示します。
+3. EAUploaderは、登録された拡張機能を編集画面の「編集ツール」に一覧で表示します。
 4. ユーザーが拡張機能のボタンを押すと、エディタ登録情報の`MenuName`に指定されたUnityのメニューが実行されます。拡張機能は、そのメニューで自身のウィンドウを開きます。
+
+:::note
+EAUploaderに標準搭載されている編集ツールは、EAUploaderのウィンドウの中に重なって表示されますが、この仕組みは内部用（internal）のため、拡張機能からは利用できません。拡張機能は、通常の`EditorWindow`として独自のウィンドウを開いてください。
+:::
 
 ## 1. パッケージをつくるためのフォルダを作成する
 * * *
@@ -29,108 +33,10 @@ description: 'EAUploaderに対応した拡張機能を制作する方法'
 
 ## 2. ソースコードを追加する
 * * *
-### サンプルソース
-
-1で追加したフォルダに次のようなソースコードを追加します。
-以下、このサンプルソースをベースとして、拡張機能を開発するときに書くべきコードについて解説します。
-※ViewpointPositionEditor.csから解説に必要な部分のソースコードを抜粋したものであるため、このままコピー＆ペーストしても動作しません。
-あくまで参考用としてご覧ください。そのまま動作する最小構成のサンプルは、後述の「[最小構成のサンプル](#最小構成のサンプル)」をご覧ください。
-
-ViewpointPositionEditor.cs
-
-```csharp
-using UnityEditor;
-using UnityEngine;
-using UnityEngine.UIElements;
-using EAUploader.CustomPrefabUtility;
-using System;
-
-namespace EAUploader.UI.Setup
-{
-    public class ViewpointPositionEditor : EditorWindow
-    {
-        private const string LOCALIZATION_FOLDER_PATH = "Packages/tech.uslog.eauploader/Editor/Resources/UI/TabContents/Setup/Editor/ViewpointPositionEditor/Localization";
-        private ViewpointPositionEditorUI _editorUI;
-        private PreviewRenderer _previewRenderer;
-        private GameObject _gameObject;
-
-        [EAUPlugin]
-        private static void Initialize()
-        {
-            string editorName = LanguageUtility.T7eFromJsonFile("Viewpoint Position Editor", LOCALIZATION_FOLDER_PATH);
-            string description = LanguageUtility.T7eFromJsonFile("A powerful viewpoint position editor for Unity.", LOCALIZATION_FOLDER_PATH);
-            string requirementDescription = LanguageUtility.T7eFromJsonFile("The selected model must have a VRCAvatarDescriptor component.", LOCALIZATION_FOLDER_PATH);
-
-            var editorRegistration = new EditorRegistration
-            {
-                MenuName = "EAUploader/ViewpointPositionEditor",
-                EditorName = editorName,
-                Description = description,
-                Version = "0.1.0",
-                Author = "USLOG",
-                Url = "https://uslog.tech/eauploader",
-                Requirement = CheckAvatarHasVRCAvatarDescriptor,
-                RequirementDescription = requirementDescription
-            };
-
-            EAUploaderEditorManager.RegisterEditor(editorRegistration);
-        }
-
-        [MenuItem("EAUploader/ViewpointPositionEditor")]
-        public static void Popup()
-        {
-            ViewpointPositionEditor editor = GetWindow<ViewpointPositionEditor>();
-            editor.titleContent = new GUIContent("Viewpoint Position Editor");
-            editor.minSize = new Vector2(800, 600);
-            editor.position = new Rect(100, 100, 1200, 600);
-        }
-
-        public void OnEnable()
-        {
-            _gameObject = PrefabManager.GetPrefab(EAUploaderCore.selectedPrefabPath);
-
-            if (_gameObject == null)
-            {
-                return;
-            }
-
-            _previewRenderer = new PreviewRenderer(_gameObject);
-        }
-
-        public void CreateGUI()
-        {
-            if (_gameObject == null)
-            {
-                Close();
-                return;
-            }
-
-            _editorUI = new ViewpointPositionEditorUI(_previewRenderer);
-            rootVisualElement.Add(_editorUI.Root);
-
-            // Localization file path
-            var localizationFolderPath = "Packages/tech.uslog.eauploader/Editor/Resources/UI/TabContents/Setup/Editor/ViewpointPositionEditor/Localization";
-            LanguageUtility.LocalizationFromJsonFile(rootVisualElement, localizationFolderPath);
-        }
-
-        private void OnDisable()
-        {
-            _previewRenderer?.Dispose();
-            _editorUI?.Dispose();
-        }
-
-        private static bool CheckAvatarHasVRCAvatarDescriptor(string prefabPath)
-        {
-            GameObject gameObject = PrefabManager.GetPrefab(prefabPath);
-            return Utility.CheckAvatarHasVRCAvatarDescriptor(gameObject);
-        }
-    }
-}
-```
-
 ### 拡張機能をEAUploader側に認識させる
 
-拡張機能をEAUploader側に認識させるために、下記のコードを書く必要があります。
+拡張機能をEAUploader側に認識させるために、下記のようなコードを書く必要があります。
+次のコードは、ViewpointPositionEditor.csから登録に関する部分を抜粋したものです。
 ※LanguageUtility.T7eFromJsonFileの役割については、後ほど詳細に解説します。
 
 ```csharp
@@ -171,6 +77,11 @@ namespace EAUploader.UI.Setup
             EAUploaderEditorManager.RegisterEditor(editorRegistration);
         }
 
+        private static bool CheckAvatarHasVRCAvatarDescriptor(string prefabPath)
+        {
+            GameObject gameObject = PrefabManager.GetPrefab(prefabPath);
+            return Utility.CheckAvatarHasVRCAvatarDescriptor(gameObject);
+        }
 ```
 
 1. 任意のstaticメソッドにEAUPlugin属性を付与する。
@@ -193,12 +104,14 @@ namespace EAUploader.UI.Setup
 
 :::caution[EAUPlugin属性について]
 `EAUPlugin`属性は、`EAUploader`名前空間の`EAUploader.EAUPluginAttribute`を使用してください。
-v1.4.6時点では、公開APIの`EAUploader.Editor.Plugin.API.PluginAPI.EAUPluginAttribute`を付与したメソッドは、EAUploaderの起動時に呼び出されません。
+v1.6.2時点では、公開APIの`EAUploader.Editor.Plugin.API.PluginAPI.EAUPluginAttribute`を付与したメソッドは、EAUploaderの起動時に呼び出されません。
 なお、エディタ登録情報の登録には、`EAUploaderEditorManager.RegisterEditor`の代わりに`PluginAPI.RegisterEditor`を使用することもできます。
 :::
 
 :::note
-`EditorName`は、他の拡張機能と重複しない名前を付けてください。EAUploaderは`EditorName`をもとに一覧の▼の開閉状態を管理しているため、同じ名前の拡張機能があると表示が正しく切り替わりません。
+`EditorName`、`Description`、`RequirementDescription`は、一覧に表示するときにEAUploader本体の翻訳ファイルで翻訳されます。EAUploader本体の翻訳ファイルに無い文字列はそのまま表示されるため、拡張機能独自の文字列は後述の`LanguageUtility.T7eFromJsonFile`で翻訳してから登録してください。
+
+また、`EditorName`は、他の拡張機能と重複しない名前を付けてください。EAUploaderは`EditorName`をもとに一覧の▼の開閉状態を管理しているため、同じ名前の拡張機能があると表示が正しく切り替わりません。
 :::
 
 ### EAUploader側から呼び出すメソッドを実装する
@@ -207,32 +120,32 @@ v1.4.6時点では、公開APIの`EAUploader.Editor.Plugin.API.PluginAPI.EAUPlug
 ユーザーが拡張エディタの起動ボタンを押した際、呼び出されるメソッドとなります。
 
 ```csharp
-        [MenuItem("EAUploader/ViewpointPositionEditor")]
-        public static void Popup()
+        [MenuItem("Tools/My Avatar Tool")]
+        public static void Open()
         {
-            ViewpointPositionEditor editor = GetWindow<ViewpointPositionEditor>();
-            editor.titleContent = new GUIContent("Viewpoint Position Editor");
-            editor.minSize = new Vector2(800, 600);
-            editor.position = new Rect(100, 100, 1200, 600);
+            var window = EditorWindow.GetWindow<MyAvatarTool>();
+            window.titleContent = new GUIContent("My Avatar Tool");
+            window.minSize = new Vector2(800, 600);
         }
-
 ```
 
 以上の手順を踏むことで、EAUploaderの画面に拡張機能起動ボタンが表示されるようになります。
 
-### 選択中のアバターを取得する
+### 選択中のアイテムを取得する
 
-ユーザーがEAUploaderで選択しているアバター（プレハブ）のパスは、`EAUploaderCore.selectedPrefabPath`（公開APIでは`CoreAPI.SelectedPrefabPath`）で取得できます。
+ユーザーがEAUploaderで選択しているアイテム（プレハブ）のパスは、`EAUploaderCore.selectedPrefabPath`（公開APIでは`CoreAPI.SelectedPrefabPath`）で取得できます。
 プレハブの`GameObject`は、`PrefabManager.GetPrefab`（公開APIでは`PrefabAPI.GetPrefab`）で取得できます。
 
-```csharp
-        public void OnEnable()
-        {
-            _gameObject = PrefabManager.GetPrefab(EAUploaderCore.selectedPrefabPath);
-        }
-```
+選択中のアイテムが変更されたことを検知したい場合は、`CoreAPI.SelectedPrefabPathChanged`イベントを使用します。
 
-選択中のアバターが変更されたことを検知したい場合は、`CoreAPI.SelectedPrefabPathChanged`イベントを使用します。
+### 選択中のアイテムを変更する
+
+選択中のアイテムのパスは、EAUploaderが管理しているPrefab Variant（`Assets/EAUploader/Prefabs/<アイテム名>/<アイテム名>.prefab`）のパスです。
+EAUploaderは、ユーザーがインポートした元のPrefabを変更せず、このPrefab Variantだけを変更する方針で作られています。拡張機能でも、選択中のパスのPrefabだけを変更するようにしてください。
+
+* Prefabを変更するときは、`PrefabUtility.LoadPrefabContents`で開き、`PrefabUtility.SaveAsPrefabAsset`で同じパスに保存することをおすすめします。変更はPrefab Variantのオーバーライドとして保存されます。
+* 保存すると、EAUploaderがインポートを検知して、一覧の情報やプレビュー画像を自動で更新します。
+* 拡張機能で作成したテクスチャやメッシュなどのアセットは、アイテムのフォルダ（`Assets/EAUploader/Prefabs/<アイテム名>/`）の中に保存することをおすすめします。アイテムを削除したときに、そのアイテムでしか使われていないアセットは一緒に削除されます。
 
 ### 他必要に応じてCreateGUI,OnEnableメソッド等を実装する
 
@@ -253,10 +166,10 @@ EAUploaderと同じ見た目のUIを作成したい場合は「[UIコンポー�
 4. Version Definesを追加する。設定値は下記である。Define、Expressionの値は、適宜変更して適用すること。
    * Resource:tech.uslog.eauploader
    * Define:EAUploader
-   * Expression:1.4.0
+   * Expression:1.6.0
 
 上記手順4によって、条件付きコンパイルを行えるようになります。
-例えば、次のように記述することで、Ver1.4.0以上のEAUploaderが存在する場合にのみ、コードを有効にするといった動作が可能になります。
+例えば、次のように記述することで、Ver1.6.0以上のEAUploaderが存在する場合にのみ、コードを有効にするといった動作が可能になります。
 
 ```csharp
 #if EAUploader
@@ -268,7 +181,7 @@ EAUploaderが導入されていないプロジェクトでも拡張機能を使�
 
 ## 最小構成のサンプル
 * * *
-そのまま動作する、最小構成の拡張機能のサンプルです。選択中のアバターの名前と視点の高さを表示します。
+そのまま動作する、最小構成の拡張機能のサンプルです。選択中のアイテムの名前と視点の高さを表示します。
 
 ```csharp
 using UnityEditor;
@@ -337,8 +250,12 @@ namespace MyTool.Editor
 * * *
 作成したフォルダ（ソースコードと.asmdefファイル）を`.unitypackage`としてエクスポートするか、VPMパッケージとして配布してください。
 
-* `.unitypackage`の場合、ユーザーはセットアップタブの「拡張機能をインポート」ボタンからインポートできます。
+* `.unitypackage`の場合、ユーザーはUnityのメニュー「Assets」→「Import Package」→「Custom Package...」からインポートできます。
 * VPMパッケージの場合、`package.json`の`vpmDependencies`に`tech.uslog.eauploader`を指定することで、EAUploaderへの依存を明示できます。
+
+:::note
+v1.6.0以降、編集画面の「拡張機能をインポート」「他の拡張機能を探す」ボタンは一時的に非表示になっています。
+:::
 
 配布した拡張機能は、是非[Project EAUploaderのDiscordサーバー](https://discord.gg/yYFru7brra)でお知らせください。
 
@@ -392,7 +309,7 @@ JSONファイルは次の形式で格納する必要があります。対応す�
 ```
 
 :::caution
-EAUploaderが対応しているすべての言語（v1.4.6時点では`ja`、`ko`）のJSONファイルを用意してください。
+EAUploaderが対応しているすべての言語（v1.6.2時点では`ja`、`ko`）のJSONファイルを用意してください。
 `LanguageUtility.LocalizationFromJsonFile`は、いずれかの言語のJSONファイルが存在しない場合にエラーになります。翻訳が用意できない言語は、`"items": []`のように空のファイルを置いてください。（英語の文字列がそのまま表示されます）
 :::
 
@@ -409,25 +326,16 @@ EAUploaderが対応しているすべての言語（v1.4.6時点では`ja`、`ko
 
 もっとも、前文の説明はイメージであり、実際にUXMLファイルの文字列を書き換えているわけではない点に注意してください。LanguageUtility.LocalizationFromJsonFileメソッドが置き換えるのは、あくまでもrootVisualElement中の値です。
 
-サンプルコードでは、CreateGUIメソッド中に該当の処理が記述されています。
-
 ```csharp
         public void CreateGUI()
         {
-            if (_gameObject == null)
-            {
-                Close();
-                return;
-            }
-
-            _editorUI = new ViewpointPositionEditorUI(_previewRenderer);
-            rootVisualElement.Add(_editorUI.Root);
+            var visualTree = Resources.Load<VisualTreeAsset>("MyAvatarTool");
+            visualTree.CloneTree(rootVisualElement);
 
             // Localization file path
-            var localizationFolderPath = "Packages/tech.uslog.eauploader/Editor/Resources/UI/TabContents/Setup/Editor/ViewpointPositionEditor/Localization";
+            var localizationFolderPath = "Assets/MyAvatarTool/Localization";
             LanguageUtility.LocalizationFromJsonFile(rootVisualElement, localizationFolderPath);
         }
-
 ```
 
 公開APIでは`LanguageAPI.LocalizeFromJsonFile`が同じ働きをします。
@@ -453,7 +361,7 @@ LanguageUtility.T7eFromJsonFileメソッドを使用すると、英語の文字�
 公開APIでは`LanguageAPI.GetLocalizedTextFromJsonFile`が同じ働きをします。
 
 :::note
-編集ツールの一覧に表示される`EditorName`などは、EAUploaderの起動時に登録されます。そのため、言語を変更した場合は、EAUploaderが再起動されるまで以前の言語で表示されます。
+`EditorName`などのエディタ登録情報は、EAUploaderの起動時に登録されます。そのため、`T7eFromJsonFile`で翻訳した文字列は、言語を変更してもEAUploaderが再起動されるまで以前の言語で表示されます。
 :::
 
 ### 現在設定されている言語を取得する

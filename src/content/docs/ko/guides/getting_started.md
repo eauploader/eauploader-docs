@@ -25,6 +25,7 @@ Unity에는 다양한 버그가 있습니다. 가끔 예측할 수 없고 해결
 **・Creator Companion**
 - VRChat이 배포하는 Unity 프로젝트 관리 소프트웨어입니다.
   일반적으로 VCC로 불립니다.
+  VCC 대신 호환 소프트웨어인 ALCOM을 사용할 수도 있습니다.
 
 **설치할 패키지(Unity에 설치할 추가 기능 및 도구)**
 
@@ -34,7 +35,7 @@ Unity에는 다양한 버그가 있습니다. 가끔 예측할 수 없고 해결
 **・EAUploader**
 - EAUploader 본체입니다. Unity 내에서 작동합니다.
 
-EAUploader에서의 작업은 Unity에 변경을 가하는 것입니다. Unity는 일반 작업 상태를 유지하기 위해 종료 시 저장 작업을 수행하지 않습니다.
+EAUploader에서의 작업은 Unity에 변경을 가하는 것입니다. Unity는 일반적으로 작업 상태를 유지하므로 종료할 때 저장할 필요가 없습니다.
   EAUploader를 통한 아바타 업로드는 VRCSDK의 기능을 사용하는 것이며, VRCSDK를 사용한 업로드와 동일합니다.
 
 ### 문제가 발생했을 때
@@ -193,6 +194,8 @@ Unity와 VCC의 설정이 완료되었습니다.
 프로젝트는 크게 네 가지로 나뉩니다.
 아바타와 월드용 프로젝트가 각각 Unity2019와 2022용으로 두 가지씩 네 가지가 있습니다.
 
+※VCC 버전에 따라 표시가 다를 수 있습니다. EAUploader는 Unity 2022만 지원합니다. 반드시 Unity 2022용 아바타 프로젝트를 선택하세요.
+
 ![Untitled](getting_started/18.png)
 
 <span style="color: #00b0f0">Unity 2022 Avatar Project</span>를 선택하세요. 프로젝트 이름에 적절한 이름을 입력하세요.
@@ -204,14 +207,14 @@ Unity와 VCC의 설정이 완료되었습니다.
 
 프로젝트 관리 화면으로 이동합니다. VCC 패키지는 여기에서 추가, 업데이트, 삭제할 수 있습니다.
 
-VCC에 EAUploader를 추가하려면 [여기](https://eauploader.uslog.tech/)를 클릭하세요.
+VCC에 EAUploader를 추가하려면 [여기](https://eauploader.uslog.tech/install)를 클릭하세요.
 
 ![Untitled](getting_started/19.png)
 
 VCC에 자동으로 팝업이 표시됩니다.
 <span style="color: #00b0f0">I Understand, Add Repository</span>를 클릭하여 VCC에 EAUploader를 추가하세요.
 
-Manage Packages에서 Easy Avatar Uploader for EAUploader를 찾아 ⊕ 버튼을 클릭하여 추가하세요.
+Manage Packages에서 Easy Avatar Uploader for VRChat을 찾아 ⊕ 버튼을 클릭하여 추가하세요.
 
 ![Untitled](getting_started/20.png)
 
@@ -223,25 +226,34 @@ Manage Packages에서 Easy Avatar Uploader for EAUploader를 찾아 ⊕ 버튼�
 
 ### 설치 및 실행 완료
 
-이제 아바타를 업로드할 준비가 되었습니다.
+이제 아바타를 업로드할 준비가 되었습니다. 프로젝트를 열면 EAUploader의 '아바타 목록' 화면이 자동으로 표시됩니다.
 
 ![Untitled](getting_started/22.png)
 
-VRM 아바타를 사용하고 싶다면 별도의 가이드 'VRM 사용하기'를 참조하세요.
+※이미지는 이전 버전의 화면입니다. v1.6.0 이후에는 화면 디자인이 바뀌었습니다.
+
+VRM 아바타를 사용하고 싶다면 별도의 가이드 '[VRM 아바타 사용하기](/ko/guides/vrm/)'를 참조하세요.
 
 프로젝트에서는 EAUploader를 닫고 일반 Unity 편집기로 아바타 수정을 할 수 있습니다.
 
-왼쪽 하단은 종료 버튼입니다. EAUploader를 닫으려면 오른쪽 상단의 ✕를 클릭하세요.
+Unity를 종료하려면 아바타 목록 위쪽의 '유니티 종료' 버튼을 사용할 수 있습니다. EAUploader를 닫으려면 창 오른쪽 상단의 ✕를 클릭하세요.
+닫은 EAUploader는 Unity 상단 메뉴의 'EAUploader' → 'Open EAUploader'에서 다시 열 수 있습니다.
 
 ## 도구 사용 방법
 * * *
-### 도구 내 가이드
+### 도움말과 이 문서
 
-EAUploader에는 도구 내 가이드가 있습니다.
+EAUploader 화면 곳곳에는 '도움말' 버튼이 있어, 각 항목의 설명을 확인할 수 있습니다.
 
-![Untitled](getting_started/23.png)
+각 화면의 사용 방법은 이 문서에서 설명합니다.
 
-도구 사용 방법, 셰이더, 플러그인, 업로드 등에 대한 설명은 도구 내 가이드를 읽어주세요.
+- [화면 구성](/ko/guides/overview/)
+- [아바타 가져오기와 관리](/ko/guides/import/)
+- [편집 화면](/ko/guides/setup/)
+- [편집 도구](/ko/guides/edit_tools/)
+- [아바타 업로드](/ko/guides/upload/)
+- [VRM 아바타 사용하기](/ko/guides/vrm/)
+- [EAUploader 업데이트와 삭제](/ko/guides/update/)
 
 ### 백업 방법
 
@@ -302,9 +314,9 @@ https://vrc.group/EAUP.0512
 
 [https://uslog.tech/contact](https://uslog.tech/contact)
 
-새 사용자를 위한 가이드 v1.1
+새 사용자를 위한 가이드 v1.3
 
-2024년 7월 25일
+2026년 11월 6일
 
 USLOG (uslog.tech)
 

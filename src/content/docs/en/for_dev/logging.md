@@ -13,7 +13,7 @@ Please visit our project's Discord server.
 * * *
 The logging function outputs a series of internal operations of EAUploader to a log file, providing developers with an easy way to view them. This feature is provided to facilitate faster troubleshooting by developers.
 
-This feature is implemented in `EAUploader.UI.Windows.Logger` (`Editor/Resources/UI/Windows/Logger.cs`). This document is based on EAUploader v1.4.6.
+This feature is implemented in `EAUploader.UI.Windows.Logger` (`Editor/Resources/UI/Windows/Logger.cs`). This document is based on EAUploader v1.6.2.
 
 # Terminology
 * * *
@@ -54,7 +54,7 @@ EAUploader is starting...
 *** Environment Details ***
 Date: 2024-04-22
 Log GUID: 0123456789abcdef0123456789abcdef
-Application-Version: 1.4.6
+Application-Version: 1.6.2
 Unity-Version: 2022.3.22f1
 Editor-Platform: WindowsEditor
 Vpm-Dependency: 
@@ -110,24 +110,28 @@ Currently, tab switching operations are outputted as EAU logs.
 
 # Error Report Window
 * * *
-When a log of type ERR or EXP is received, the error report window is shown. The error report window is shown at the center of the EAUploader window.
+When a log of type ERR or EXP is received and `showErrorReportWindow` in the settings file is enabled, the error report window is shown. It is shown as a modal inside EAUploader's main window.
 
 The error report window shows the following.
 
 1. Error logs that occurred since EAUploader started (date and time, message, trace log)
 2. Environment information (EAUploader version, Unity version, platform, list of VPM packages)
 
-The error report window has the following buttons.
+To keep UI Toolkit text rendering stable, up to 200,000 characters of error logs are kept, and only the latest 40,000 characters are shown. When the display is truncated, a notice is shown.
+Errors that occur while the error report is being shown do not show the error report again (recursion guard).
 
-1. Restart: Re-imports `Packages/tech.uslog.eauploader` and restarts EAUploader.
-2. Copy: Copies the contents of the error report to the clipboard.
-3. OK: Closes the error report window.
+The error report window has the following items.
+
+1. "Do not show this window again": When checked, disables `showErrorReportWindow`. It can be re-enabled with "Show error report window" in "Settings" on the Avatar List.
+2. Restart: Re-imports `Packages/tech.uslog.eauploader` and restarts EAUploader.
+3. Copy: Copies the contents of the error report to the clipboard.
+4. OK: Closes the error report window.
 
 Note that the error report window is also shown for error logs outputted by things other than EAUploader. To check its behavior, you can use "Window" → "Error Report" in the menu (outputs a test error log).
 
 # Log Report Display Function
 * * *
-Users can open the log file storage folder (`EAUploaderLog`) with the "Open log report" button shown in "Settings" of the Import/Settings tab.
+Users can open the log file storage folder (`EAUploaderLog`) with the "Open log report" button shown in "Settings" on the Avatar List.
 
 When the "Open log report" button is pressed, a dialog saying that the folder where the log files are stored has been opened is shown, and the log file storage folder is opened in the OS file browser.
 

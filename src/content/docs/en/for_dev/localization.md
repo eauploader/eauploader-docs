@@ -12,7 +12,7 @@ Please visit our project's Discord server.
 This page explains how localization works in EAUploader and how to write help messages and EA Library articles.
 If you would like to help with translation, please read this page too.
 
-This document is based on EAUploader v1.4.6.
+This document is based on EAUploader v1.6.2.
 
 ## How Localization Works
 * * *
@@ -58,6 +58,11 @@ Write English strings directly in UXML.
 The main window runs `LanguageUtility.Localization` every 100ms and replaces the `text` of every `TextElement` (`Label`, `Button`, etc.) in the window with the `value` when it exactly matches a `key` in the translation file.
 In windows other than the main window, call `LanguageUtility.Localization(rootVisualElement)` in `CreateGUI` or similar.
 
+The following elements are not translated.
+
+* Elements with the USS class `no-translate`. Add it to user-provided text such as item names and tags.
+* The contents of text input fields (their labels are translated).
+
 ### Translating C# Strings
 To set strings from C#, use `T7e.Get`.
 
@@ -69,6 +74,8 @@ T7e.Get("Avatar bundle size is too large. The maximum size is {0} MB, but the cu
 ```
 
 If there is no corresponding translation, the key is returned as is.
+
+`T7e` caches translations. The cache is cleared when a file in `Resources/Localization/` is reimported, so edits to translation files apply without a domain reload.
 
 ## Adding a Language
 * * *
@@ -88,7 +95,7 @@ If you add only the UI translation file without the other files, errors will occ
 
 ## Help Messages
 * * *
-Pressing a "Help" button (`HelpButton`) shown throughout the screen opens the help message window (`EAUploaderMessageWindow`).
+Pressing a "Help" button (`HelpButton`) shown throughout the screen shows the help message (`EAUploaderMessageWindow`) as a modal inside the EAUploader window.
 Messages are loaded for the current language from `Editor/Resources/Message/{language code}/{message number}.txt`.
 
 In UXML, specify the message number in `msg-id`.
@@ -102,26 +109,23 @@ From C#, you can show it with `EAUploaderMessageWindow.ShowMsg(100)` (`HelpButto
 ### Message Numbers in Use
 | Number | Where it is shown |
 | ---- | ---- |
-| 100 | Import/Settings tab: Import Avatars |
-| 101 | Import/Settings tab: Import VRM |
-| 102 | Import/Settings tab: Import Shaders |
-| 103 | Setup tab: Edit tool |
-| 104 | Setup tab: Import extentions |
-| 105 | Upload tab: Select an Avatar to Upload |
-| 107 | Shader error |
-| 108 | Preview controls |
-| 109 | Upload tab: Avatar Info |
-| 111 | Upload tab: Build as Test |
-| 112 | Upload tab: Upload |
-| 113 | Upload tab: Avatar Performance |
-| 114 | Upload tab: Platform |
-| 115 | Upload tab: Set thumbnail |
-| 116 | Import/Settings tab: Manage Model |
-| 117 | Upload tab: Blueprint |
+| 100 | Import window: Import Avatars |
+| 101 | Import window: Import VRM |
+| 102 | Import window: Import Shaders |
+| 103 | Edit screen: Edit tool |
+| 104 | Edit screen: Import extentions (currently hidden) |
+| 108 | 3D preview controls |
+| 109 | Upload: How it looks on VRChat |
+| 113 | Upload: Avatar Performance |
+| 114 | Upload: Platform |
+| 116 | Avatar List |
+| 117 | Upload: Blueprint |
 | 200 | VRM conversion window |
 | 201 | Viewpoint Position Editor |
-| 202 | Upload tab: Avatar Optimization |
+| 202 | Upload: Avatar Optimization |
 | 203 | Guidance for installing AvatarOptimizer |
+
+Files for 105, 107, 111, 112, and 115 still exist but are not used by the v1.6.2 screens.
 
 When adding a new message, use an unused number and add the file to the folders of all languages.
 
@@ -155,6 +159,10 @@ Check the required shader with the distributor and import it into the project.</
 
 ## EA Library Articles
 * * *
+:::note
+Since v1.6.0, the EA Library is not shown on EAUploader's screens. The article files remain in the package.
+:::
+
 EA Library articles are stored in the following folder for each language. Create one folder per article.
 
 ```

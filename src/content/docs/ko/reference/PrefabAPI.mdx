@@ -1,0 +1,145 @@
+---
+title: 'EAUploader.Editor.Prefab.API'
+description: 'EAUploader.Editor.Prefab.API namespace'
+sidebar:
+  order: 3
+---
+
+프리팹 조작과 정보 가져오기에 관한 공개 API입니다.
+`Editor/Public EAUploader API/`의 `EAUploader.Editor.Prefab.API.cs`, `EAUploader.Editor.PrefabPreview.API.cs`, `EAUploader.Editor.Shader.API.cs`, `EAUploader.Editor.PrefabUtility.API.cs`, `EAUploader.Editor.VRM.API.cs`에 정의되어 있습니다(클래스 하나당 파일 하나).
+
+```csharp
+using EAUploader.Editor.Prefab.API;
+```
+
+| Class           | Description |
+| --------------- | ----------- |
+| PrefabAPI | 프리팹 조작과 정보 가져오기를 제공하는 클래스 |
+| PrefabPreviewAPI | 프리팹의 미리보기 이미지를 제공하는 클래스 |
+| ShaderAPI | 셰이더 확인을 제공하는 클래스 |
+| PrefabUtilityAPI | 아바타 정보 가져오기를 제공하는 클래스 |
+| VRMAPI | VRM 가져오기를 제공하는 클래스(VRM Converter for VRChat 설치 시에만) |
+
+:::note
+`VRCAvatarDescriptor`나 `PipelineManager`를 반환하는 메서드를 사용할 때는 확장 기능의 어셈블리에 VRChat SDK 어셈블리 참조를 추가하세요.
+:::
+
+# PrefabAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| UpdatePrefabInfo | Void | 관리용 Prefab을 다시 초기화합니다(관리 폴더, 이전, 부족한 미리보기 이미지) |
+| ImportPrefab | Void | 지정한 경로의 프리팹을 EAUploader에 가져옵니다(관리용 Prefab Variant 생성 또는 업데이트) |
+| GetPrefab | GameObject | 지정한 경로의 프리팹을 가져옵니다 |
+| ShowDeletePrefabDialog | Bool | 프리팹 삭제 확인을 표시합니다 |
+| DeletePrefabPreview | Void | 지정한 경로의 프리팹 미리보기 이미지를 삭제합니다 |
+| PinPrefab | Void | 지정한 경로의 프리팹 고정을 전환합니다 |
+| GetAvatarDescriptor | VRCAvatarDescriptor | 지정한 경로의 프리팹의 VRCAvatarDescriptor를 가져옵니다 |
+| IsPinned | Bool | 지정한 경로의 프리팹이 고정되어 있는지 확인합니다 |
+| SavePrefab | Void | 프리팹을 저장합니다 |
+
+```csharp
+public static void UpdatePrefabInfo();
+public static void ImportPrefab(string prefabPath);
+public static GameObject GetPrefab(string prefabPath);
+public static bool ShowDeletePrefabDialog(string prefabPath, Action<bool> completed);
+[Obsolete] public static bool ShowDeletePrefabDialog(string prefabPath);
+public static void DeletePrefabPreview(string prefabPath);
+public static void PinPrefab(string prefabPath);
+public static VRCAvatarDescriptor GetAvatarDescriptor(string prefabPath);
+public static bool IsPinned(string prefabPath);
+public static void SavePrefab(GameObject prefab, string path);
+```
+
+* `GetPrefab`, `GetAvatarDescriptor`는 프리팹을 찾지 못하면 `null`을 반환합니다.
+* `ImportPrefab`은 관리되지 않는 프리팹이면 관리용 Prefab Variant(`Assets/EAUploader/Prefabs/<아이템 이름>/`)를 만들고, 관리용 Prefab이면 정보를 업데이트합니다. 원본 프리팹은 변경하지 않습니다. `Assets/` 밖, `Assets/EAUploader/` 안의 프리팹, 이미 Variant가 있는 프리팹으로는 만들지 않습니다.
+* `ShowDeletePrefabDialog(path, completed)`는 EAUploader 창 안에 삭제 확인 모달을 열고, 모달을 열었으면 `true`를 반환합니다. 삭제가 완료되면 `completed(true)`, 취소하면 `completed(false)`가 호출됩니다. 프리팹과 함께 원본 프리팹과 그 아이템에서만 사용하는 머티리얼·텍스처도 삭제됩니다.
+* 인수가 하나인 `ShowDeletePrefabDialog(path)`는 `[Obsolete]`입니다. 호환성을 위해 Unity 표준 확인 대화상자를 표시하고 삭제가 완료되면 `true`를 반환합니다.
+* `PinPrefab`은 고정되지 않았으면 고정하고, 고정되어 있으면 해제합니다.
+* `SavePrefab`은 `GameObject`를 지정한 경로에 프리팹으로 저장하고 `ImportPrefab`을 실행합니다.
+
+# PrefabPreviewAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| GeneratePreview | Texture2D | 프리팹의 미리보기 이미지를 생성합니다 |
+| GenerateAndSaveAllPrefabPreviews | Void | 미리보기 이미지가 없는 모든 프리팹의 미리보기 이미지를 생성하여 저장합니다 |
+| SavePrefabPreview | Void | 프리팹의 미리보기 이미지를 저장합니다 |
+| LoadTextureFromFile | Texture2D | 파일에서 텍스처를 불러옵니다 |
+| SaveTextureToFile | Void | 텍스처를 PNG 파일로 저장합니다 |
+| GetPreviewImagePath | String | 프리팹의 미리보기 이미지 경로를 가져옵니다 |
+| GetPrefabPreview | Texture2D | 프리팹의 미리보기 이미지를 가져옵니다 |
+
+```csharp
+public static Texture2D GeneratePreview(GameObject prefab);
+public static void GenerateAndSaveAllPrefabPreviews();
+public static void SavePrefabPreview(string prefabPath, Texture2D preview);
+public static Texture2D LoadTextureFromFile(string filePath);
+public static void SaveTextureToFile(Texture2D texture, string filePath);
+public static string GetPreviewImagePath(string prefabPath);
+public static Texture2D GetPrefabPreview(string prefabPath);
+```
+
+* 미리보기 이미지는 `Assets/EAUploader/PrefabPreviews/{Prefab의 GUID}.png`에 저장됩니다. 이름을 바꿔도 미리보기 이미지는 유지됩니다.
+* `GeneratePreview`는 1200×900 이미지를 생성합니다.
+* `GetPrefabPreview`는 미리보기 이미지가 없으면 `null`을 반환합니다.
+
+# ShaderAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CheckShaders | Void | Assets 안의 모든 프리팹의 셰이더를 확인합니다 |
+| GetExistingShaders | List | 프로젝트에 설치된 셰이더의 그룹 이름 목록을 가져옵니다 |
+| CheckShadersInPrefabs | Void | 지정한 프리팹의 셰이더를 확인합니다 |
+| CheckAvatarHasShader | Bool | 아바타에 필요한 셰이더가 모두 있는지 확인합니다 |
+
+```csharp
+public static void CheckShaders();
+public static List<string> GetExistingShaders();
+public static void CheckShadersInPrefabs(string prefabPath);
+public static bool CheckAvatarHasShader(GameObject avatar);
+```
+
+* `CheckShaders`, `CheckShadersInPrefabs`는 셰이더가 부족한 프리팹이 있으면 대화상자를 표시합니다.
+* `CheckAvatarHasShader`는 셰이더가 부족하지 않으면 `true`를 반환합니다. 대화상자는 표시하지 않습니다.
+
+# PrefabUtilityAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| GetAvatarHeight | Float | 아바타의 높이(시점 높이)를 가져옵니다 |
+| CheckAvatarHasVRCAvatarDescriptor | Bool | 아바타가 VRCAvatarDescriptor를 가지고 있는지 확인합니다 |
+| CheckAvatarIsVRM | Bool | 아바타가 VRM인지 확인합니다 |
+| CheckAvatarHasTandO | Bool | 아바타가 AvatarOptimizer의 TraceAndOptimize를 가지고 있는지 확인합니다 |
+| GetAvatarDescriptor | VRCAvatarDescriptor | 아바타의 VRCAvatarDescriptor를 가져옵니다 |
+| GetPipelineManager | PipelineManager | 아바타의 PipelineManager를 가져옵니다 |
+
+```csharp
+public static float GetAvatarHeight(GameObject avatar);
+public static bool CheckAvatarHasVRCAvatarDescriptor(GameObject avatar);
+public static bool CheckAvatarIsVRM(GameObject avatar);
+public static bool CheckAvatarHasTandO(GameObject avatar);
+public static VRCAvatarDescriptor GetAvatarDescriptor(GameObject avatar);
+public static VRC.Core.PipelineManager GetPipelineManager(GameObject avatar);
+```
+
+* `GetAvatarHeight`는 VRCAvatarDescriptor의 `ViewPosition` Y 좌표를 반환합니다. VRCAvatarDescriptor가 없으면 `0`을 반환합니다.
+* `CheckAvatarHasVRCAvatarDescriptor`는 `avatar`가 `null`이면 `false`를 반환합니다.
+* `CheckAvatarIsVRM`은 VRM Converter for VRChat이 설치되지 않았으면 항상 `false`를 반환합니다.
+* `CheckAvatarHasTandO`는 AvatarOptimizer가 설치되지 않았으면 항상 `false`를 반환합니다.
+
+# VRMAPI
+* * *
+VRM Converter for VRChat이 설치된 경우(`HAS_VRM`이 정의된 경우)에만 사용할 수 있습니다.
+
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| ImportVRM | Void | VRM 파일을 가져오고 변환 창을 표시합니다 |
+
+```csharp
+public static void ImportVRM(string path = null);
+```
+
+* `path`를 생략하면 파일 선택 대화상자를 표시합니다.
+* 프로젝트의 `Assets` 안에 있는 파일은 지정할 수 없습니다.
+* 가져온 VRM은 `Assets/VRM/{파일 이름}.prefab`에 저장됩니다.

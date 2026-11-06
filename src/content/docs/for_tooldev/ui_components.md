@@ -7,7 +7,7 @@ description: 'EAUploaderのスタイルと独自UIコンポーネントを拡張
 
 EAUploaderのUIは、UI Toolkit（UXML / USS）で作成されています。独自UIコンポーネントは`Packages/tech.uslog.eauploader/Editor/Resources/UI/Components`配下に実装されています。
 
-本ドキュメントは、EAUploader v1.4.6の内容に準拠しています。
+本ドキュメントは、EAUploader v1.6.2の内容に準拠しています。
 
 ## スタイルシートを適用する
 * * *
@@ -33,6 +33,16 @@ public void CreateGUI()
 :::note
 `MaterialIcon`は`UI/styles`で定義されているフォントを使用します。`MaterialIcon`を使用する場合は、必ず`UI/styles`を適用してください。
 :::
+
+### テーマを合わせる
+EAUploaderの配色（ライト・ダーク・パステル）は、ウィンドウのルートに付けたUSSクラス（`white`、`dark`、`pastel`）で切り替わります。
+独自のウィンドウもEAUploaderと同じ配色にしたい場合は、`EAUploader.UI.ThemeUtility`を使用します。
+
+```csharp
+using EAUploader.UI;
+
+ThemeUtility.ApplyTheme(rootVisualElement, ThemeUtility.GetCurrentTheme());
+```
 
 ### よく使用するユーティリティクラス
 | クラス | 内容 |
@@ -145,7 +155,7 @@ var link = new Link("Open the website") { href = "https://example.com" };
 ```
 
 :::note
-ヘルプメッセージは、EAUploader本体の`Editor/Resources/Message`から読み込まれます。v1.4.6時点では、拡張機能から独自のヘルプメッセージを追加することはできません。
+ヘルプメッセージは、EAUploader本体の`Editor/Resources/Message`から読み込まれ、EAUploaderのウィンドウの中にモーダルとして表示されます。v1.6.2時点では、拡張機能から独自のヘルプメッセージを追加することはできません。
 :::
 
 ### Preview
@@ -165,6 +175,8 @@ preview.UpdatePreview(otherPrefabPath);
 | `UpdatePreview(prefabPath)` | 表示するプレハブを変更します。 |
 | `ResetPreview()` | 拡大率と位置をリセットします。 |
 
+`new Preview(container, gameObject)`のように`GameObject`を渡すと、アセットではない編集中のオブジェクトをプレビューできます（ライブモード）。オブジェクトの構造を変更したときは`Refresh()`、表示だけを更新するときは`Repaint()`を呼び出し、使い終わったら`Dispose()`を呼び出してください。
+
 公開APIでは`PreviewAPI`から同じ操作ができます。
 
 ### PrefabItemButton
@@ -181,6 +193,22 @@ foreach (var prefab in PrefabManager.GetAllPrefabsWithPreview())
 
 公開APIでは`PrefabItemButtonAPI.CreatePrefabItemButton(prefab, clickAction, disabled)`で作成できます。
 
+### DropdownFieldPro
+EAUploaderのデザインに合わせたドロップダウンです。`choices`で選択肢を、`index`で選択中の項目を指定します。`multiSelect`を`true`にすると複数選択でき、選択の変更は`selectionChanged`イベントで受け取れます。
+
+```csharp
+var dropdown = new DropdownFieldPro("", new List<string> { "Avatar", "Cloth" }, 0);
+dropdown.RegisterValueChangedCallback(evt => Debug.Log(evt.newValue));
+```
+
+### CheckBox
+EAUploaderのデザインに合わせたチェックボックスです。`BaseField<bool>`を継承しています。
+
+```csharp
+var checkBox = new CheckBox("I agree");
+checkBox.RegisterValueChangedCallback(evt => Debug.Log(evt.newValue));
+```
+
 ### ContentWarningsField
 VRChatのコンテンツ警告（Content Warnings）のタグを選択するフィールドです。
 
@@ -190,8 +218,11 @@ VRChatのコンテンツ警告（Content Warnings）のタグを選択するフ�
 | `SetTags(tags)` | 選択するタグを設定します。 |
 | `OnToggleTag` | タグの選択が変更されたときに発生するイベント |
 
-## ダイアログを表示する
+## ダイアログ・モーダル・通知を表示する
 * * *
+EAUploaderのダイアログやモーダル、通知は、EAUploaderのメインウィンドウの中に表示されます。EAUploaderのウィンドウが開いている状態で使用してください。
+
+### DialogPro
 `EAUploader.UI.Windows.DialogPro`を使用すると、EAUploaderと同じ見た目のダイアログを表示できます。
 
 ```csharp
@@ -208,6 +239,36 @@ DialogPro.Show(DialogPro.DialogType.Info, "Confirm", "Do you want to continue?",
 
 `DialogType`には`Info`、`Warning`、`Error`、`Success`を指定できます。
 既にダイアログが表示されている場合、新しいダイアログは表示されません。
+
+### Modal
+`EAUploader.UI.EAUploader.modal`は、EAUploaderのウィンドウ内に表示される共通のモーダルです。タイトル、内容、下部のボタンを指定して表示します。
+
+```csharp
+using EAUploader.UI.Components;
+using EAUploaderWindow = EAUploader.UI.EAUploader;
+
+var modal = EAUploaderWindow.modal;
+modal.Initialize();
+modal.setTitle("My Tool");
+modal.setContent(new Label("Hello"));
+modal.setFooter(new[]
+{
+    new Modal.ActionButton("Close", () => modal.Hide())
+});
+modal.Show();
+```
+
+### 通知（トースト）
+`EAUploader.UI.EAUploader.toasts`を使用すると、画面の端に短い通知を表示できます。
+
+```csharp
+using EAUploader.UI.Components;
+using EAUploaderWindow = EAUploader.UI.EAUploader;
+
+EAUploaderWindow.toasts?.Show("Saved", type: ToastType.Success);
+```
+
+`ToastType`には`Info`、`Success`、`Warning`、`Error`、`Loading`を指定できます。
 
 ## 多言語対応
 * * *

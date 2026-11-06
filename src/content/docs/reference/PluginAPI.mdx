@@ -34,7 +34,7 @@ public static void RegisterEditor(PluginAPI.EditorRegistration editorRegistratio
 public static IEnumerable<PluginAPI.EditorRegistration> GetRegisteredEditors();
 ```
 
-* `RegisterEditor`は、`EAUploaderEditorManager.RegisterEditor`と同じ働きをします。登録したエディタは、セットアップタブの「編集ツール」に表示されます。
+* `RegisterEditor`は、`EAUploaderEditorManager.RegisterEditor`と同じ働きをします。登録したエディタは、編集画面の「編集ツール」に表示されます。
 * `OnEditorManagerLoad`は、EAUploaderの起動時に呼び出される処理です。通常、拡張機能から呼び出す必要はありません。
 
 # PluginAPI.EditorRegistration
@@ -57,7 +57,7 @@ public static IEnumerable<PluginAPI.EditorRegistration> GetRegisteredEditors();
 プラグインの初期化メソッドを指定するための属性です。
 
 :::caution
-v1.4.6時点では、この属性を付与したメソッドはEAUploaderの起動時に呼び出されません。
+v1.6.2時点では、この属性を付与したメソッドはEAUploaderの起動時に呼び出されません。
 初期化メソッドには、`EAUploader`名前空間の`EAUPlugin`属性（`EAUploader.EAUPluginAttribute`）を使用してください。
 :::
 

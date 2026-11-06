@@ -1,0 +1,115 @@
+---
+title: 'EAUploader.Editor.Resource.API'
+description: 'EAUploader.Editor.Resource.API namespace'
+sidebar:
+  order: 4
+---
+
+EAUploader의 스타일과 자체 UI 컴포넌트 기능을 제공하는 공개 API입니다.
+`Editor/Public EAUploader API/EAUploader.Editor.Resource.API.cs`에 정의되어 있습니다.
+
+```csharp
+using EAUploader.Editor.Resource.API;
+```
+
+각 컴포넌트의 자세한 내용은 '[UI 컴포넌트](/ko/for_tooldev/ui_components/)'를 참조하세요.
+
+| Class           | Description |
+| --------------- | ----------- |
+| EAUResourceAPI | EAUploader의 스타일시트를 제공하는 클래스 |
+| HelpButtonAPI | 도움말 메시지를 표시하는 클래스 |
+| LinkAPI | 링크를 만드는 클래스 |
+| MaterialIconAPI | 머티리얼 아이콘을 만드는 클래스 |
+| PrefabItemButtonAPI | 프리팹 아이템 버튼을 만드는 클래스 |
+| ShadowButtonAPI | 섀도 버튼을 만드는 클래스 |
+| PreviewAPI | 조작 가능한 아바타 미리보기를 제공하는 클래스 |
+
+# EAUResourceAPI
+* * *
+| Property | Type | Description |
+| ------ | ---- | ----------- |
+| EAUStyles | StyleSheet | EAUploader의 스타일시트 |
+| EAUTailwind | StyleSheet | Tailwind 스타일시트 |
+
+```csharp
+public static StyleSheet EAUStyles { get; }
+public static StyleSheet EAUTailwind { get; }
+```
+
+* 이들은 EAUploader 메인 창이 표시될 때 불러옵니다. 메인 창이 한 번도 표시되지 않았다면 `null`입니다. 확실하게 가져오려면 `Resources.Load<StyleSheet>("UI/styles")`, `Resources.Load<StyleSheet>("UI/tailwind")`를 사용하세요.
+
+# HelpButtonAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| ShowMessage | Void | 지정한 메시지 번호의 메시지를 표시합니다 |
+
+```csharp
+public static void ShowMessage(int msgNum);
+```
+
+* 메시지는 EAUploader 본체의 `Editor/Resources/Message/{언어 코드}/{메시지 번호}.txt`에서 불러오며, EAUploader 창 안의 모달로 표시됩니다. 사용 중인 메시지 번호는 '[다국어 지원과 리소스](/ko/for_dev/localization/#사용-중인-메시지-번호)'를 참조하세요.
+
+# LinkAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CreateLink | VisualElement | 지정한 텍스트와 URL을 가진 링크를 만듭니다 |
+
+```csharp
+public static VisualElement CreateLink(string text, string url);
+```
+
+# MaterialIconAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CreateMaterialIcon | VisualElement | 지정한 아이콘 이름을 가진 머티리얼 아이콘을 만듭니다 |
+
+```csharp
+public static VisualElement CreateMaterialIcon(string iconName);
+```
+
+* 아이콘 이름은 [Material Icons](https://fonts.google.com/icons?icon.set=Material+Icons)의 이름을 지정합니다.
+* 아이콘을 표시하려면 `EAUStyles`(`UI/styles`)를 적용해야 합니다.
+
+# PrefabItemButtonAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CreatePrefabItemButton | VisualElement | 지정한 프리팹 정보와 클릭 동작을 가진 프리팹 아이템 버튼을 만듭니다 |
+
+```csharp
+public static VisualElement CreatePrefabItemButton(PrefabInfo prefab, Action clickAction, bool disabled = false);
+```
+
+* `PrefabInfo`는 `EAUploader.CustomPrefabUtility.PrefabInfo`입니다. 미리보기 이미지가 있는 목록은 `PrefabManager.GetAllPrefabsWithPreview()`로 가져올 수 있습니다.
+* `disabled`가 `true`이면 업로드할 수 없는 아바타의 버튼을 누를 수 없는 상태로 만듭니다.
+
+# ShadowButtonAPI
+* * *
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CreateShadowButton | VisualElement | 지정한 텍스트와 클릭 동작을 가진 섀도 버튼을 만듭니다 |
+
+```csharp
+public static VisualElement CreateShadowButton(string text, Action clickAction);
+```
+
+# PreviewAPI
+* * *
+이 미리보기는 Texture2D 미리보기가 아니라 마우스로 조작할 수 있는 렌더링 미리보기입니다.
+
+| Method | Type | Description |
+| ------ | ---- | ----------- |
+| CreatePreview | Preview | 지정한 루트 요소와 프리팹 경로를 가진 미리보기를 만듭니다 |
+| ShowContent | Void | 미리보기 내용을 표시합니다 |
+| UpdatePreview | Void | 지정한 프리팹 경로로 미리보기를 업데이트합니다 |
+| ResetPreview | Void | 미리보기를 초기화합니다 |
+
+```csharp
+public static Preview CreatePreview(VisualElement rootElement, string prefabPath);
+public static void ShowContent(Preview preview);
+public static void UpdatePreview(Preview preview, string prefabPath);
+public static void ResetPreview(Preview preview);
+```
